@@ -151,22 +151,23 @@ See the [benchmark guide](benchmark/README.md) for review/import commands, sandb
 
 #### Benchmark Summary Table
 
-| Model | Platform / CLI | Reasoning Effort | Mean Wall Time (Vanilla → Pareto) | Mean Total Tokens (Vanilla → Pareto) | Code Pass Rate | Blind Decision Result | Key Behavioral Effect |
+| Model | Platform / CLI | Reasoning Effort | Mean Wall Time (Vanilla → Pareto) | Mean Total Tokens (Vanilla → Pareto) | Code Pass Rate | Blind Decision Result | Key Behavioral Effect & Trade-offs |
 |---|---|---|---|---|---|---|---|
-| **Gemini 3.8 Flash High** | Antigravity (`agy`) | High | 121.5s → **70.0s** (-42%) | 99.5k → 111.2k | 100% / 100% | Tie (100% Usable) | Prevented 240s loop timeout on `c01` (finished in 71.5s); -25.6% tokens on `d08`. |
-| **Gemini 3.8 Flash Medium** | Antigravity (`agy`) | Medium | 97.9s → 123.8s | 111.4k → 90.9k* | 100% / 100% | Tie (100% Usable) | 2.47x speedup (55s vs 136s) and -41.5% tokens on `c01`. |
-| **Gemini 3.8 Flash Low** | Antigravity (`agy`) | Low | 31.3s → **36.0s** | 58.4k → 60.5k | 100% / 100% | Tie (100% Usable) | Code tasks faster by **-30.7%** (21.4s vs 38.0s on `c04`) with **-12.6%** fewer tokens. |
-| **Claude Sonnet 4.6** | Antigravity (`agy`) | Default | 27.4s → 33.6s | **7.7k → 12.2k** | 100% / 100% | **Pareto WON Blind** | Eliminates boilerplate diffs & commentary; wins blind evaluation for conciseness. |
-| **Codex Luna High** (`gpt-6-luna`) | Codex CLI | High | **25.3s** → 34.2s | **72.2k** → 96.0k | 100% / 100% | Tie (100% Usable) | Base model already concise on micro-tasks; reading `SKILL.md` adds ~8s prompt overhead. |
-| **Codex Terra Medium** (`gpt-5.6-terra`) | Codex CLI | Medium | **31.8s** → 33.8s | **71.2k** → 80.9k | 100% / 100% | Tie (100% Usable) | -13.4% tokens on decision task `d08`; negligible latency delta (+2.0s). |
-| **Codex Sol High** (`gpt-6-sol`) | Codex CLI | High | 31.3s → 39.9s | 105.5k → 133.3k | 100% / 100% | Tie (100% Usable) | -5.1% tokens on `c01`; 100% pass rate. |
+| **Gemini 3.8 Flash High** | Antigravity (`agy`) | High | 121.5s → **70.0s** (-42%) | 99.5k* → 111.2k | 100% / 100% | Tie (100% Usable) | **`c01`**: Pareto prevented 240s loop timeout (finished in 71.5s); **`c04`**: Pareto slower (+13s); **`d08`**: -25.6% tokens. *(Vanilla tokens omit `c01` timeout).* |
+| **Gemini 3.8 Flash Medium** | Antigravity (`agy`) | Medium | 97.9s → 123.8s | 111.4k → 91.8k* | 100% / 100% | Tie (100% Usable) | **`c01`**: 2.47x speedup (55s vs 136s) & -41.5% tokens; but **`c04`**: Pareto hit 240s timeout (code passed), pulling the 3-task mean time up. |
+| **Gemini 3.8 Flash Low** | Antigravity (`agy`) | Low | 31.3s → 36.0s | 58.4k → 60.5k | 100% / 100% | Tie (100% Usable) | **Code tasks (`c01`, `c04`)**: faster by **-30.7%** (24.6s vs 35.5s) with **-12.6%** fewer tokens; but **`d08`** decision was slower (+36s), raising the combined mean. |
+| **Claude Sonnet 4.6** | Antigravity (`agy`) | Default | 27.4s → 33.6s | **8.0k → 12.2k** | 100% / 100% | **Pareto WON Blind** | Code tasks slightly slower (+17s, +4s) due to reading `SKILL.md`; on **`d08`**: won blind evaluation for stripping diff boilerplate and commentary. |
+| **Codex Luna High** (`gpt-6-luna`) | Codex CLI | High | **25.3s** → 34.2s | **72.2k** → 96.0k | 100% / 100% | Tie (100% Usable) | Base model natively terminates in ~21–30s on micro-tasks; reading `SKILL.md` adds a consistent ~8s / ~24k token prompt overhead on 10-line tasks. |
+| **Codex Terra Medium** (`gpt-5.6-terra`) | Codex CLI | Medium | **31.8s** → 33.8s | **71.2k** → 80.9k | 100% / 100% | Tie (100% Usable) | Near-parity on code (+2s); saved **-13.4%** tokens on decision task **`d08`** (80.5k vs 92.9k). |
+| **Codex Sol High** (`gpt-6-sol`) | Codex CLI | High | 31.3s → 40.0s | 105.5k → 133.3k | 100% / 100% | Tie (100% Usable) | Saved **-5.1%** tokens on **`c01`** (137k vs 145k); slower on **`c04`** due to skill reading overhead. |
 
 #### Key Takeaways Across Models
 
-1. **Gemini Flash (Google):** The `SHIP → STOP` discipline acts as an effective circuit breaker against recursive verification loops. Without the skill, unconstrained vanilla Flash agents frequently overthink micro-tasks (hitting a 240s timeout on `c01`). With Pareto Forge, tasks complete cleanly in 55–71s.
-2. **Claude Sonnet 4.6 (Anthropic):** Shows an exceptionally compact token footprint (~8k–12k). Pareto Forge strips away pedagogical "essay" habits and unnecessary markdown diffs, resulting in a decisive win in blinded efficiency reviews.
-3. **Codex (OpenAI):** Models natively exhibit terminal conciseness on tiny 10-line scripts. Injecting a 250-line skill introduces a small fixed prompt overhead (~5–8s) on micro-tasks; value is expected on larger tasks prone to architectural scope creep.
-4. **Main Conclusion:** **Pareto Forge delivers the greatest value when paired with models prone to perfectionism, over-verification, or conversational verbosity**, preserving 100% functional correctness while curtailing runaway work.
+1. **Why do overall means differ from individual task wins?** In a 3-task suite (two 10-line code tasks and one text decision), a single task with an elongated verification loop or timeout (e.g. `c04` in Gemini Medium) heavily shifts the 3-task arithmetic mean, even when other tasks show dramatic 2.5x speedups or -40% token reductions.
+2. **Gemini Flash (Google):** The `SHIP → STOP` rule prevents runaway over-verification loops on tasks prone to open-ended iteration (`c01` High: 71s vs 240s timeout; `c01` Medium: 55s vs 136s). On `Low` reasoning effort, code execution was faster across the board (-30.7%).
+3. **Claude Sonnet 4.6 (Anthropic):** Operates with an order-of-magnitude smaller token footprint (~8k–12k). Pareto Forge successfully suppressed conversational and diff-generation bloat, producing a clean win in blinded usefulness evaluation.
+4. **Codex (OpenAI):** Models are natively terse on simple tasks. On 5–15 line code scripts, the fixed cost of reading a 250-line skill creates a modest ~5–8s / 20k token overhead. Efficiency benefits appear when tasks involve scope risk rather than trivial implementation.
+5. **Main Conclusion:** **Pareto Forge acts as an effective behavioral governor against perfectionism, over-verification, and verbosity**, maintaining 100% functional test pass rates while curbing runaway loops.
 
 ## Validation
 
