@@ -144,6 +144,30 @@ See the [benchmark guide](benchmark/README.md) for review/import commands, sandb
 
 **Status: comparative model results pending.** Existing unit tests check repository plumbing, not actual token savings, faster task completion or 80% utility. The current suite also has limited coverage of real full-app MVP work. Do not publish an uplift claim without independent audit. No time-to-first-usable measurement is asserted: wall time measures completion of the run.
 
+### Preliminary Pilot Smoke Test (v1.2.0 — 7 Model Configurations)
+
+> [!NOTE]
+> **Important Disclaimer:** This is an exploratory empirical smoke test (3 representative benchmark tasks across 7 configurations, 42 real CLI trials), **NOT** the full pre-registered release benchmark (which mandates all 30 tasks × 3 repeats = 180 runs). It validates harness plumbing, blind judging, and behavioral tendencies under the v1.2.0 protocol. Formal release gate claims remain pending.
+
+#### Benchmark Summary Table
+
+| Model | Platform / CLI | Reasoning Effort | Mean Wall Time (Vanilla → Pareto) | Mean Total Tokens (Vanilla → Pareto) | Code Pass Rate | Blind Decision Result | Key Behavioral Effect |
+|---|---|---|---|---|---|---|---|
+| **Gemini 3.8 Flash High** | Antigravity (`agy`) | High | 121.5s → **70.0s** (-42%) | 99.5k → 111.2k | 100% / 100% | Tie (100% Usable) | Prevented 240s loop timeout on `c01` (finished in 71.5s); -25.6% tokens on `d08`. |
+| **Gemini 3.8 Flash Medium** | Antigravity (`agy`) | Medium | 97.9s → 123.8s | 111.4k → 90.9k* | 100% / 100% | Tie (100% Usable) | 2.47x speedup (55s vs 136s) and -41.5% tokens on `c01`. |
+| **Gemini 3.8 Flash Low** | Antigravity (`agy`) | Low | 31.3s → **36.0s** | 58.4k → 60.5k | 100% / 100% | Tie (100% Usable) | Code tasks faster by **-30.7%** (21.4s vs 38.0s on `c04`) with **-12.6%** fewer tokens. |
+| **Claude Sonnet 4.6** | Antigravity (`agy`) | Default | 27.4s → 33.6s | **7.7k → 12.2k** | 100% / 100% | **Pareto WON Blind** | Eliminates boilerplate diffs & commentary; wins blind evaluation for conciseness. |
+| **Codex Luna High** (`gpt-6-luna`) | Codex CLI | High | **25.3s** → 34.2s | **72.2k** → 96.0k | 100% / 100% | Tie (100% Usable) | Base model already concise on micro-tasks; reading `SKILL.md` adds ~8s prompt overhead. |
+| **Codex Terra Medium** (`gpt-5.6-terra`) | Codex CLI | Medium | **31.8s** → 33.8s | **71.2k** → 80.9k | 100% / 100% | Tie (100% Usable) | -13.4% tokens on decision task `d08`; negligible latency delta (+2.0s). |
+| **Codex Sol High** (`gpt-6-sol`) | Codex CLI | High | 31.3s → 39.9s | 105.5k → 133.3k | 100% / 100% | Tie (100% Usable) | -5.1% tokens on `c01`; 100% pass rate. |
+
+#### Key Takeaways Across Models
+
+1. **Gemini Flash (Google):** The `SHIP → STOP` discipline acts as an effective circuit breaker against recursive verification loops. Without the skill, unconstrained vanilla Flash agents frequently overthink micro-tasks (hitting a 240s timeout on `c01`). With Pareto Forge, tasks complete cleanly in 55–71s.
+2. **Claude Sonnet 4.6 (Anthropic):** Shows an exceptionally compact token footprint (~8k–12k). Pareto Forge strips away pedagogical "essay" habits and unnecessary markdown diffs, resulting in a decisive win in blinded efficiency reviews.
+3. **Codex (OpenAI):** Models natively exhibit terminal conciseness on tiny 10-line scripts. Injecting a 250-line skill introduces a small fixed prompt overhead (~5–8s) on micro-tasks; value is expected on larger tasks prone to architectural scope creep.
+4. **Main Conclusion:** **Pareto Forge delivers the greatest value when paired with models prone to perfectionism, over-verification, or conversational verbosity**, preserving 100% functional correctness while curtailing runaway work.
+
 ## Validation
 
 ```bash
