@@ -11,7 +11,7 @@ import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from core import ROOT, PROJECT, CASES, atomic_json, file_hash, load_json, parse_codex_usage, parse_claude_usage
+from core import ROOT, PROJECT, CASES, atomic_json, file_hash, load_json, parse_codex_usage, parse_claude_usage, parse_agy_usage
 
 
 def prepare_workspace(path, case, arm, ponytail_path=None):
@@ -46,18 +46,23 @@ def make_prompt(case, arm, activation):
     return prefix+base
 
 
-def invoke(adapter, model, workspace, prompt, timeout, max_turns):
+def invoke(adapter, model, workspace, prompt, timeout, max_turns, reasoning_effort='high'):
     if adapter=='mock':
         # Deliberately incapable of producing a valid solution. Never call this an efficacy run.
         return {'returncode':0, 'stdout':json.dumps({'type':'mock','result':'NOT A MODEL OUTPUT'})+'\n',
                 'stderr':'MOCK ADAPTER: transport smoke test only', 'last_message':'NOT A MODEL OUTPUT'}
-    if not shutil.which(adapter):
+    exe=shutil.which(adapter)
+    if not exe and adapter!='mock':
         raise RuntimeError(f'Agent executable not found: {adapter}')
     if adapter=='codex':
-        command=['codex','exec','--json','--sandbox','workspace-write','--skip-git-repo-check','--ephemeral','--model',model,'--output-last-message',str(workspace.parent/'last_message.txt'),'-']
+        sandbox_mode='danger-full-access' if sys.platform=='win32' else 'workspace-write'
+        command=[exe,'exec','--json','--sandbox',sandbox_mode,'--ignore-user-config','--skip-git-repo-check','--ephemeral','--model',model,'-c',f'model_reasoning_effort="{reasoning_effort}"','--output-last-message',str(workspace.parent/'last_message.txt'),'-']
         inp=prompt
     elif adapter=='claude':
-        command=['claude','-p','--output-format','json','--model',model,'--max-turns',str(max_turns),'--permission-mode','acceptEdits',prompt]
+        command=[exe,'-p','--output-format','json','--model',model,'--max-turns',str(max_turns),'--permission-mode','acceptEdits',prompt]
+        inp=None
+    elif adapter=='agy':
+        command=[exe,'-p',prompt,'--model',model,'--effort',reasoning_effort,'--dangerously-skip-permissions','--output-format','json']
         inp=None
     else:
         raise ValueError(adapter)
@@ -66,6 +71,11 @@ def invoke(adapter, model, workspace, prompt, timeout, max_turns):
         if adapter=='claude':
             try:
                 last=json.loads(p.stdout).get('result','')
+            except (ValueError,AttributeError):
+                last=''
+        elif adapter=='agy':
+            try:
+                last=json.loads(p.stdout).get('response','')
             except (ValueError,AttributeError):
                 last=''
         else:
@@ -100,8 +110,9 @@ def grade(run_dir, case):
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
-    ap.add_argument('--adapter',choices=['codex','claude','mock'],default='codex')
+    ap.add_argument('--adapter',choices=['codex','claude','agy','mock'],default='codex')
     ap.add_argument('--model',help='Pin a concrete model ID for real agent runs')
+    ap.add_argument('--reasoning-effort',choices=['low','medium','high','xhigh','max'],default='high')
     ap.add_argument('--repeats',type=int,default=3)
     ap.add_argument('--out',type=Path,required=True)
     ap.add_argument('--ponytail-skill',type=Path,help='Locally reviewed, pinned Ponytail skill dir containing SKILL.md')
@@ -127,7 +138,8 @@ def main():
     random.Random(args.seed).shuffle(plan)
     if args.max_runs: plan=plan[:args.max_runs]
     try:
-        v=subprocess.run([args.adapter,'--version'],capture_output=True,text=True,timeout=8,check=False) if args.adapter!='mock' else None
+        exe=shutil.which(args.adapter) or args.adapter
+        v=subprocess.run([exe,'--version'],capture_output=True,text=True,timeout=8,check=False) if args.adapter!='mock' else None
         cli_version=(v.stdout or v.stderr).strip()[:200] if v else 'mock (not real)'
     except Exception as exc:
         cli_version='unavailable: '+str(exc)[:100]
@@ -135,7 +147,7 @@ def main():
           'created_at':datetime.now(timezone.utc).isoformat(),'suite_sha256':file_hash(ROOT/'tasks.json'),
           'pareto_skill_sha256':file_hash(PROJECT/'skills'/'pareto-forge'/'SKILL.md'),
           'pony_tail_skill_sha256':file_hash(args.ponytail_skill/'SKILL.md') if args.ponytail_skill else None,
-          'adapter':args.adapter,'model':args.model,'activation':args.activation,'repeats':args.repeats,
+          'adapter':args.adapter,'model':args.model,'reasoning_effort':args.reasoning_effort,'activation':args.activation,'repeats':args.repeats,
           'seed':args.seed,'cases':len(cases),'expected_runs':len(cases)*args.repeats*len(arms),
           'planned_runs':len(plan),'arms':arms,'case_ids':[c['id'] for c in cases],
           'max_seconds':args.max_seconds,'max_turns':args.max_turns,
@@ -151,7 +163,7 @@ def main():
             print(f'[{n}/{len(plan)}] {case["id"]} rep {repeat} arm {arm}',flush=True)
             t=time.monotonic()
             try:
-                obj=invoke(args.adapter,args.model,workspace,prompt,args.max_seconds,args.max_turns)
+                obj=invoke(args.adapter,args.model,workspace,prompt,args.max_seconds,args.max_turns,args.reasoning_effort)
             except Exception as e:
                 obj={'returncode':125,'stdout':'','stderr':f'INVOKE ERROR: {type(e).__name__}: {e}','last_message':''}
             seconds=round(time.monotonic()-t,3)
@@ -166,13 +178,13 @@ def main():
                     except ValueError: continue
                     traces.write(line+'\n')
             (trial/'last_message.txt').write_text(obj['last_message'],encoding='utf8')
-            usage=parse_codex_usage(obj['stdout']) if args.adapter=='codex' else parse_claude_usage(obj['stdout']) if args.adapter=='claude' else {'input_tokens':None,'output_tokens':None,'total_tokens':None,'cost_usd':None}
+            usage=parse_codex_usage(obj['stdout']) if args.adapter=='codex' else parse_claude_usage(obj['stdout']) if args.adapter=='claude' else parse_agy_usage(obj['stdout']) if args.adapter=='agy' else {'input_tokens':None,'output_tokens':None,'total_tokens':None,'cost_usd':None}
             grade_result=grade(trial,case)
             atomic_json(trial/'grading.json',grade_result)
             atomic_json(trial/'timing.json',{'wall_seconds':seconds,'usage':usage,'exit_code':obj['returncode']})
             rec={'case_id':case['id'],'kind':case['kind'],'arm':arm,'repeat':repeat,'trial_path':str(trial.relative_to(out)),
-                 'exit_code':obj['returncode'],'wall_seconds':seconds,'usage':usage,'grade':grade_result,
-                 'adapter':args.adapter,'mock':args.adapter=='mock'}
+                  'exit_code':obj['returncode'],'wall_seconds':seconds,'usage':usage,'grade':grade_result,
+                  'adapter':args.adapter,'mock':args.adapter=='mock'}
             log.write(json.dumps(rec,ensure_ascii=False)+'\n');log.flush()
     print('Finished raw trials. Generate report with: python benchmark/report.py --run '+str(out))
 

@@ -87,6 +87,20 @@ def parse_claude_usage(text):
             'cost_usd': d.get('total_cost_usd') if isinstance(d.get('total_cost_usd'),(int,float)) else None}
 
 
+def parse_agy_usage(text):
+    try:
+        d = json.loads(text)
+    except (ValueError, TypeError):
+        return {'input_tokens': None,'output_tokens': None,'total_tokens': None,'cost_usd': None}
+    u = d.get('usage', {})
+    if not isinstance(u, dict): u = {}
+    inp = u.get('input_tokens'); out = u.get('output_tokens')
+    total = u.get('total_tokens')
+    return {'input_tokens': inp, 'output_tokens': out,
+            'total_tokens': total if isinstance(total, int) else ((inp + out) if isinstance(inp, int) and isinstance(out, int) else None),
+            'cost_usd': None}
+
+
 def read_response(run_dir):
     run_dir = Path(run_dir)
     output = run_dir / 'workspace' / 'DECISION.md'
