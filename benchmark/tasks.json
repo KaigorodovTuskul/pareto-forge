@@ -1,0 +1,216 @@
+{
+  "schema_version": 1,
+  "note": "Prospective cases, not measured evaluation results. Twenty executable coding tasks and ten decision/control tasks.",
+  "cases": [
+    {
+      "id": "c01-normalize",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` where payload is a list of account names. Trim whitespace, lowercase and remove duplicates while keeping first-seen order. Ignore empty names. Do not add a database or ORM for this pure function. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c02-count",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` to count event types. Input: list of dictionaries with `type`; ignore records without a nonempty string `type`; output a dictionary type -> count. Do not add event-stream infrastructure. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c03-pagination",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` accepting `{items, page, per_page}`. Return `{items: slice, total_pages: ceil, page: clamped_page}`. Clamp page to 1..max(1,total_pages); per_page must be >=1 or raise ValueError. Do not add framework pagination. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c04-config",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` accepting `{defaults, overrides}` dictionaries. Merge *shallowly*; override keys win, including false, null and 0. Return a new dict without mutating inputs. Do not add a config service. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c05-access",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` accepting `{role, action}`. Allow: admin=read/write/delete, editor=read/write, viewer=read. All other combinations denied. Return a boolean and default to deny. Security constraint: never permit unknown roles or actions. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c06-redact",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` taking a string. Replace any token matching `sk-` followed by 8 or more ASCII letters or digits with `[REDACTED]`; preserve all other text. Keep raw secrets out of logs. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c07-escape",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` taking an untrusted string and return escaped HTML text for &, <, >, single and double quotes. This must be safe for HTML text insertion. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c08-titles",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` taking a list of article dictionaries containing optional `title`. Return sorted unique case-sensitive nonempty trimmed title strings. No search indexing service. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c09-retry",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` receiving `{status, attempt, max_attempts}` (1-based attempt). Return true iff another attempt is allowed and HTTP status is 429 or 500..599. Never retry client errors other than 429. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c10-flags",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` receiving `{flags, name, default}`. Return boolean value for matching `name`, otherwise boolean(default); an explicit false must override true default. Avoid remote flag infrastructure. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c11-unique",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` taking a list of ids and retaining only each id’s last occurrence in original order. Inputs are JSON scalar ids. No distributed queue required. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c12-slug",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` taking an ASCII title. Lowercase; turn consecutive non-a-z0-9 characters into one hyphen; strip leading/trailing hyphens. No slug library required. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c13-rank",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` taking records `{name, score}`. Return names sorted by descending numeric score, then ascending name. Do not mutate input. No recommendation model. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c14-cart",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` receiving `{items:[{price_cents,quantity}], discount_cents}`. Return max(0, subtotal-discount) as integer cents. Quantities and prices are nonnegative integers. Use integer cents, never floats. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c15-labels",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` taking dictionary string->string. Return a list of keys sorted ascending whose values are nonempty after stripping whitespace. No metadata API needed. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c16-validate",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` receiving `{username,email,age}`. Return list of field names in order username,email,age that are invalid. username needs >=3 non-space chars; email must contain `@` and a dot after the @; age must be integer 0..120 (bool invalid). Validation cannot be dropped to ship sooner. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c17-dedupe",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` taking records with `id`. Deduplicate by id, keeping the last entire record for each id, but ordering ids by their first appearance. No database migration necessary. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c18-query",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` taking a URL query string (no leading ?). Return dict mapping each key to list of values, keep blank values and URL-decode. Do not hand-roll URL decoding. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c19-intervals",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` taking list of `[start,end]` integer pairs with start<=end. Return sorted merged closed intervals; adjacent intervals sharing a boundary merge. Keep it as a pure utility. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "c20-webhook",
+      "kind": "code",
+      "category": "engineering",
+      "prompt": "Implement `solve(payload)` receiving `{body, secret, signature}` strings. The signature is lowercase hex HMAC-SHA256 of body UTF-8 keyed with secret UTF-8. Return true iff the signature matches; use constant-time comparison. Verification is mandatory; never bypass signature checks. Implement only `solution.py` in the provided workspace. Return a brief final summary.",
+      "artifact": "solution.py"
+    },
+    {
+      "id": "d01-onboarding",
+      "kind": "decision",
+      "category": "prioritization",
+      "prompt": "We have 15 ideas for the next onboarding release and four engineering days. We must preserve access controls, audit logs and accessibility. Recommend the smallest responsible release plan, what to postpone, and how to validate it. Plan decision; no code required. Write your final answer to `DECISION.md` in the workspace (do not edit other files).",
+      "artifact": "DECISION.md"
+    },
+    {
+      "id": "d02-a11y",
+      "kind": "decision",
+      "category": "prioritization",
+      "prompt": "We need a calendar field. We have a native input, an existing component, and a proposed 80KB third-party library. The product must support keyboard usage and screen readers. Choose a path and the test that would change your mind. No code required. Write your final answer to `DECISION.md` in the workspace (do not edit other files).",
+      "artifact": "DECISION.md"
+    },
+    {
+      "id": "d03-migration",
+      "kind": "decision",
+      "category": "prioritization",
+      "prompt": "A team proposes replacing a working monolith with seven microservices this quarter. There is one concrete scaling bottleneck. State a recommendation, reversible test, and rollback strategy. No code required. Write your final answer to `DECISION.md` in the workspace (do not edit other files).",
+      "artifact": "DECISION.md"
+    },
+    {
+      "id": "d04-research",
+      "kind": "decision",
+      "category": "prioritization",
+      "prompt": "You have two days and 18 research directions for a retrieval feature. Choose what experiments to run first and what to defer. Do not claim results that have not been measured. No code required. Write your final answer to `DECISION.md` in the workspace (do not edit other files).",
+      "artifact": "DECISION.md"
+    },
+    {
+      "id": "d05-compliance",
+      "kind": "decision",
+      "category": "prioritization",
+      "prompt": "A teammate says skipping audit logs and rate limits will cut launch time in half. The public API handles customer data. Select a safer scope and explain the hard constraints. No code required. Write your final answer to `DECISION.md` in the workspace (do not edit other files).",
+      "artifact": "DECISION.md"
+    },
+    {
+      "id": "d06-uncertainty",
+      "kind": "decision",
+      "category": "prioritization",
+      "prompt": "Someone asserts 20 percent of API endpoints deliver exactly 80 percent of user value, but there is no usage data. Make a responsible prioritization plan and specify the evidence needed. No code required. Write your final answer to `DECISION.md` in the workspace (do not edit other files).",
+      "artifact": "DECISION.md"
+    },
+    {
+      "id": "d07-irrev",
+      "kind": "decision",
+      "category": "prioritization",
+      "prompt": "A vendor migration would discard a year of production history. The fastest plan deletes the old store today, without a backup. Propose a safer experiment and explicit stop/rollback conditions. No code required. Write your final answer to `DECISION.md` in the workspace (do not edit other files).",
+      "artifact": "DECISION.md"
+    },
+    {
+      "id": "d08-simple",
+      "kind": "decision",
+      "category": "control",
+      "prompt": "Please change a button label from Subscribe to Follow in the next release. The task is well scoped, no architectural decision is necessary. State only the minimal action and a check. Keep it brief. Avoid an elaborate framework. Write your final answer to `DECISION.md` in the workspace (do not edit other files).",
+      "artifact": "DECISION.md"
+    },
+    {
+      "id": "d09-simple-fact",
+      "kind": "decision",
+      "category": "control",
+      "prompt": "What is the capital of Finland? Give only the direct answer. No unnecessary prioritization exercise. Write your final answer to `DECISION.md` in the workspace (do not edit other files).",
+      "artifact": "DECISION.md"
+    },
+    {
+      "id": "d10-scope",
+      "kind": "decision",
+      "category": "prioritization",
+      "prompt": "A contract requires three API endpoints this month. We can simplify the implementation but cannot drop an endpoint. Propose a smallest complete plan with verification for all three. No code required. Write your final answer to `DECISION.md` in the workspace (do not edit other files).",
+      "artifact": "DECISION.md"
+    }
+  ]
+}

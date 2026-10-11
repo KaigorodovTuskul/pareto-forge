@@ -1,0 +1,41 @@
+{
+  "candidates": [
+    {
+      "id": "permission-checks",
+      "impact": 5,
+      "effort": 2,
+      "confidence": 0.95,
+      "mandatory": true
+    },
+    {
+      "id": "invitation-flow",
+      "impact": 5,
+      "effort": 2,
+      "confidence": 0.8,
+      "dependencies": [
+        "permission-checks"
+      ]
+    },
+    {
+      "id": "expired-invite-recovery",
+      "impact": 4,
+      "effort": 2,
+      "confidence": 0.75,
+      "dependencies": [
+        "permission-checks"
+      ]
+    },
+    {
+      "id": "custom-workflow-engine",
+      "impact": 2,
+      "effort": 5,
+      "confidence": 0.35
+    },
+    {
+      "id": "animated-dashboard",
+      "impact": 2,
+      "effort": 4,
+      "confidence": 0.5
+    }
+  ]
+}

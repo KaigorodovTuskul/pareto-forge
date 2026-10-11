@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.DS_Store
+.vscode/
+.idea/
+*.zip
+*.skill
+*.log
+.env
+
+# Raw benchmark runs and human/LLM judgments may contain confidential inputs
+benchmark-results/
+bench-runs/
