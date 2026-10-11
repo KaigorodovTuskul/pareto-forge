@@ -1,30 +1,30 @@
-# Engineering guardrails
+# Engineering: fastest safe useful slice
 
-Apply for coding, architecture, migrations, automation and refactoring. Inspired by the minimal-change philosophy of Ponytail, independently written.
+Read only if implementing code. Inspired by the pragmatic minimalism of Ponytail; this text is original.
 
-## Completeness beats line-count vanity
+## Implementation ladder
 
-A small diff is valuable only if it preserves behavior, security, accessibility, compatibility and maintainability. A compact implementation with missing tests is *not* the minimal complete solution. Prefer what existing maintainers will understand.
+1. Is anything required beyond a direct edit or simple answer? If not, do it.
+2. Reuse existing code or native platform features before adding a dependency.
+3. Implement one usable vertical slice without speculative abstraction.
+4. Check the **cheapest meaningful proof** that the requested result works.
+5. Stop. Further polish belongs on a "later" list, not in the critical path.
 
-## Decision ladder
+## Proportionate checks, not a blanket ban on tests
 
-1. Is a change necessary to deliver the requested outcome?
-2. Can an unnecessary path/feature be removed?
-3. Can we reuse the project's existing implementation or interface?
-4. Is the required behavior already in the platform / standard library?
-5. Can an existing approved dependency be used safely?
-6. Only then: add the smallest new module, with tests at critical seams.
+- One-off visual demo: launch it, exercise primary navigation and inspect one representative chart. Don't create CI and dozens of tests without reason.
+- Small pure function: run a few edge cases; existing unit tests may be cheaper than manual inspection.
+- Permission, payment, privacy, migration, durable storage, or production dependency: relevant automated tests and safeguards are part of the **minimum usable** result. Never remove them to save time.
+- Existing project requirements: run the mandated checks; don't change an explicit Definition of Done unilaterally.
 
-For bugs, identify the root cause, affected callers, regression test and needed migration or rollout. For new features, ship a vertical slice with an observable success signal. Check logs/config/fixtures/docs as appropriate; avoid ceremony when not appropriate.
+## Stop conditions
 
-## Reversibility
+Stop at *usable + must-haves + proportionate check*. Don't refactor working code solely for beauty or future needs. Record noncritical compromises clearly. If a mandatory requirement remains unmet, do not declare the task complete: ask to narrow scope or finish the requirement.
 
-Prefer feature flags only if rollback cannot be achieved safely otherwise. Always add checkpoints for destructive changes. Do not auto-run destructive commands. For major work, propose staged rollout and monitoring.
+## Avoid
 
-## Signals of unnecessary complexity
+Large plan documents for small work; needless agents and tools; generalized plugin architectures; theme engines for demos; README dissertations; dependency installation for a trivial helper; testing the framework instead of the delivered feature; rewriting unrelated code.
 
-Speculative settings; premature plugin systems; duplicate abstractions; adding dependencies for tiny operations; long plans without a falsifiable milestone; needless agent-to-agent calls; verbose output that does not change a decision.
+## Escalate when justified
 
-## When complexity *is* justified
-
-Regulatory obligations, defense-in-depth security, stable performance, audited provenance, reliability, multi-team interfaces, or demonstrated long-term maintenance savings. Document these reasons; avoid “YAGNI” as an excuse to cut them.
+Large-scale changes, unknown security risks, irreversible state mutations, heavily coupled architecture, poor observability or ambiguous binding acceptance criteria justify targeted research, rollback plans and deeper checks.

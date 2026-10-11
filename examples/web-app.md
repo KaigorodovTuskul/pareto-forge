@@ -1,15 +1,13 @@
-# Example: product feature prioritization
+# Example: Pareto Forge for a web UI
 
-**Request:** "We need dashboard themes, CSV export, role-based permissions, three chart libraries, and a new sidebar before launch."
+**Request:** “Create a quick interactive visual dashboard with multiple charts.”
 
-**Outcome:** launch an auditable analytics dashboard for a pilot group with correct data access.
+**Value:** one launchable page with a usable core interaction, readable data and representative chart families.
 
-**Hard constraints:** role-based restrictions if sensitive data is exposed; security tests. Those cannot be deferred merely because implementation is hard.
+**Cut:** defer custom theme engines, multiple frameworks, elaborate state management and optional unit-test infrastructure. Reuse the existing chart/UI library.
 
-**Leverage:** reuse the existing chart library, add a minimal CSV export only if pilot users require it, and ship core visualizations with correct access. Defer redundant charts and multiple themes until there is evidence of value.
+**Ship:** put working plots, small sample data and basic navigation in an easily runnable app. Do a smoke check: launch, switch a chart, observe the expected output.
 
-**Grill:** who needs CSV in the first week? What happens if export bypasses role checks? Is a new sidebar actually necessary for navigation?
+**Stop:** once the main workflow works and nothing critical is broken. Clearly state which enhancements were deferred.
 
-**Implementation:** one narrow slice, existing components, permissions tested, no speculative plugin system.
-
-**Verify:** pilot users can complete the three essential tasks; unauthorized users cannot access or export restricted data; test suite passes.
+**Scope boundary:** if user requests **all** chart types or contractually specified variants, a partial prototype does not satisfy the request without explicit permission. Speed is not an excuse to misrepresent completeness.

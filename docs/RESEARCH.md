@@ -1,4 +1,4 @@
-# Reference research — Pareto Forge v1.0.0
+# Reference research — Pareto Forge v1.2.0
 
 **Reviewed:** 2026-10-11. **Scope:** public skill descriptions/READMEs and official skill-format documentation. This is a qualitative architecture study, not a benchmark of model performance or an exhaustive survey of every skill on skills.sh. Rankings, install counts and compatibility lists can change.
 
@@ -23,9 +23,9 @@ Looked for reusable mechanisms related to (1) outcome and leverage selection; (2
 
 ## What the survey changes
 
-1. Make *outcome selection* explicit **before** Ponytail-style minimal implementation.
+1. Make the smallest *usable outcome* explicit, and ship it before optional polish.
 2. Make the grill mechanism native and independent of another installed skill.
-3. Avoid enforcing large approval workflows on low-risk tasks: modes Flash / Focus / Deep.
+3. Avoid enforcing process on routine tasks: Flash by default, Focus or Deep only when warranted.
 4. Capture mandatory constraints *before* ROI ranking; a score cannot waive security or contracts.
 5. Keep a short SKILL.md and on-demand references; this matches progressive disclosure.
 6. Prefer a single portable core and official installer rather than 20 duplicated forks or unverifiable manifests.
@@ -33,7 +33,7 @@ Looked for reusable mechanisms related to (1) outcome and leverage selection; (2
 
 ## Novelty / attribution boundary
 
-Pareto, first-principles thinking, YAGNI and design reviews are general methods. Ponytail / Superpowers / Matt Pocock provide useful public examples. Pareto Forge's five-gate workflow, criteria, example, code and documentation are independently authored as a synthesis. Nothing from those repos is bundled. See their repositories for licenses, versions and original instructions.
+Pareto, first-principles thinking, YAGNI and design reviews are general methods. Ponytail / Superpowers / Matt Pocock provide useful public examples. Pareto Forge's four-move Value/Cut/Ship/Stop workflow, criteria, example, code and documentation are independently authored as a synthesis. Nothing from those repos is bundled. See their repositories for licenses, versions and original instructions.
 
 ## Known unknowns
 
@@ -41,3 +41,7 @@ Pareto, first-principles thinking, YAGNI and design reviews are general methods.
 - Does it improve user outcomes or reduce total cost? **Needs controlled baselines.**
 - Does it work in all existing agent products? **No universal guarantee**; distribution via supported Agent Skills hosts, plus manual fallback.
 - Do numeric prioritization scores represent measured ROI? **No**; the script is transparent shorthand and should be challenged.
+
+## v1.2 critical refinement
+
+Earlier versions emphasized five gates and verification quality. That framing could increase latency and token use on trivial work. The current design instead uses a Flash-first execution policy, a stop rule based on diminishing marginal value and on-demand Grill/tests. This is a design hypothesis, not an empirical improvement; the benchmark measures quality-gated resource efficiency.

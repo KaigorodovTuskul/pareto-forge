@@ -1,25 +1,11 @@
-# Example: Release planning under a deadline
+# Example: Ship a useful onboarding slice this week
 
-**Intent:** a team has 15 candidate enhancements and five days to ship a reliable onboarding release.
+**Request:** “We have 15 potential enhancements and five days to ship onboarding.”
 
-## Outcome and constraints
+**Must-have:** users can accept invitations and sign in with correct access permissions and required accessibility; existing API behavior remains valid.
 
-New employees complete an accessible, auditable invitation and onboarding flow. Mandatory: least-privilege access, existing API compatibility, the team's localization requirement, and a working rollback path.
+**Do now:** reuse the invitation API and existing UI; support the common happy path plus essential errors. Check the invitation flow and a denied-permission path, then ship.
 
-## Compare paths
+**Not now:** new orchestration service, complex approval configuration, animations and exhaustive analytics. Don't write a long architecture RFC for a reversible short release.
 
-1. **Replace the workflow engine:** powerful but introduces high integration risk.
-2. **Reuse the invitation API and improve the onboarding checklist:** small, testable vertical slice.
-3. **Skip onboarding changes:** least effort but unlikely to satisfy the release goal.
-
-## Challenge
-
-Would the slimmed-down design still work for users with multiple teams, expired invitations, and delayed approvals? Verify on real test accounts before declaring the pilot sufficient.
-
-## Smallest safe delivery
-
-Prefer option 2 *if* its integration tests and accessibility checks pass. Defer dashboard widgets, custom rule builders, and speculative integrations. Keep security and audit requirements intact.
-
-## Evidence, not claims
-
-Run user scenarios and failure-injection tests; report observed completion rate, defects and recovery time. No assertion that the selected work provides 80% of value until evaluated.
+**Stop:** once a new teammate can complete onboarding and mandatory permissions are correct. If the user later needs cross-organization roles or advanced audits, plan the next increment then. No unmeasured promise of an 80% uplift.

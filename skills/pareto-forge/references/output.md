@@ -1,27 +1,17 @@
-# Response contracts (adapt to audience)
+# Output contracts — minimize words, maximize usefulness
 
-## Flash
+## Flash (default)
 
-**Do:** [highest-leverage next action]. **Skip:** [unnecessary action]. **Check:** [how to tell if done].
+Show the result or the change made. Add one concise check or caveat only if relevant. No mandatory headings, scoring table or unsolicited plan.
 
 ## Focus
 
-**Outcome:** …
-**Options:** small comparison, at most 3–5 options.
-**Pick:** … because [evidence and tradeoff].
-**Not now:** … [reason / reconsider trigger].
-**Biggest uncertainty:** …
-**Next action & verification:** …
+A short line on the chosen high-leverage approach; the usable result; one line of intentionally deferred noncritical work. If implementation is possible and authorized, do it rather than merely propose.
 
-Only use a full score table if the options and estimates justify one. If doing implementation, give a concise after-action response rather than a second lengthy proposal.
+## Deep (explicit or risk-triggered)
 
-## Deep
+State the consequential decision, one or two key risks, the smallest responsible validation and rollback/approval point. Use [decision record](../assets/decision-record.md) only when a durable document earns its cost.
 
-Use [decision-record.md](../assets/decision-record.md). Include traceable assumptions, non-negotiables, comparison, skeptical objection, test, rollback, owner, review point and explicit rejected options. When a decision needs approval, identify the exact decision to be made; don't bury it in a long checklist.
+## Never
 
-## Do not
-
-- Print a 20-step plan for a one-line change.
-- Claim that the 80/20 ratio is empirically true for the task without measurement.
-- Rate 20 candidates numerically merely to appear rigorous.
-- Confuse a completed implementation with a validated user outcome.
+Invent 80% or token-savings measurements; claim incomplete scope as full scope; dump a lengthy methodology checklist; hide skipped mandatory requirements; call a mock test an agent benchmark.

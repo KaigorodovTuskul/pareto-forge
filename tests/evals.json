@@ -7,11 +7,10 @@
       "should_trigger": true,
       "prompt": "Our team has 15 onboarding feature ideas and a one-week release window. Which work should we prioritize, and what should we defer?",
       "must": [
-        "outcome",
-        "alternatives",
-        "pilot test",
-        "not now",
-        "uncertainty"
+        "usable first slice",
+        "defer optional work",
+        "hard constraints",
+        "stop condition"
       ],
       "veto": [
         "claims 20% features guarantee 80% benefit"
@@ -22,10 +21,10 @@
       "should_trigger": true,
       "prompt": "We need a date picker. Choose between adding a huge library, reusing our existing component, or native input.",
       "must": [
-        "check existing code",
-        "user needs",
-        "smallest complete solution",
-        "verification"
+        "reuse native or existing",
+        "functional change",
+        "proportionate check",
+        "no needless dependency"
       ],
       "veto": [
         "drops required accessibility"
@@ -59,16 +58,19 @@
       ]
     },
     {
-      "id": "point-in-time",
+      "id": "plotly-mvp",
       "should_trigger": true,
-      "prompt": "For our analytics report, should we use current corrected records to evaluate what the system knew last Tuesday, or replay the archived snapshots available at that time?",
+      "prompt": "Build a quick Streamlit Plotly gallery for demonstration, with representative charts and no requirement for exhaustive coverage. Optimize for a runnable first version this afternoon.",
       "must": [
-        "future-information leakage",
-        "archived snapshots",
-        "tradeoff"
+        "working gallery",
+        "basic navigation",
+        "representative charts",
+        "skip optional infrastructure",
+        "stop after cheap check"
       ],
       "veto": [
-        "treats retroactive corrections as historical knowledge"
+        "claims all charts supported",
+        "does not produce a usable result when code tools are available"
       ]
     },
     {
@@ -86,7 +88,9 @@
       "should_trigger": false,
       "prompt": "Change the title string from Home to Dashboard in this file; nothing else.",
       "must": [
-        "brief direct completion"
+        "brief direct completion",
+        "no elaborate process",
+        "proportionate check"
       ],
       "veto": [
         "unnecessary 10-step framework"
@@ -97,7 +101,8 @@
       "should_trigger": false,
       "prompt": "What is the capital of Norway?",
       "must": [
-        "direct answer"
+        "direct answer",
+        "no needless analysis"
       ],
       "veto": [
         "leverage scoring"
@@ -143,13 +148,26 @@
       "should_trigger": true,
       "prompt": "I want to research 20 competing RAG strategies, but have two days. Pick the highest-value experiments.",
       "must": [
-        "objective",
-        "information value",
+        "smallest useful research",
         "time-box",
-        "defer low-value"
+        "defer low value",
+        "stop criterion"
       ],
       "veto": [
         "pretends comparative evaluation has already happened"
+      ]
+    },
+    {
+      "id": "explicit-all-scope",
+      "should_trigger": true,
+      "prompt": "Make a Streamlit gallery demonstrating ALL Plotly chart types and variations, not only popular ones. The exact list of versions is unspecified. Can we just stop after ten popular types?",
+      "must": [
+        "cannot silently drop ALL",
+        "ask for scope approval or fulfill all",
+        "distinguish partial MVP from complete result"
+      ],
+      "veto": [
+        "claims ten types fulfill every chart and variation"
       ]
     }
   ]

@@ -1,259 +1,144 @@
 <div align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/pareto-forge-logo-on-dark.png">
-    <img src="docs/assets/pareto-forge-logo.png" alt="Pareto Forge — converging paths meet at one high-leverage point" width="160" height="160">
+    <img src="docs/assets/pareto-forge-logo.png" alt="Pareto Forge" width="148" height="148">
   </picture>
 
   <h1>Pareto Forge</h1>
-
-  <p><strong>Do less. Ship what matters.</strong></p>
-  <p>An outcome-first skill that helps AI agents prioritize high-leverage work,<br>challenge assumptions, and deliver the smallest complete solution.</p>
-
+  <p><strong>Useful first. Stop early.</strong></p>
+  <p>An open-source Agent Skill that helps AI coding agents deliver usable results<br>with less unnecessary planning, code, polish, and token spend.</p>
   <p>
-    <a href="https://agentskills.io/specification"><img src="https://img.shields.io/badge/Agent_Skills-open_standard-00B8C8?style=flat-square" alt="Agent Skills open standard"></a>
-    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-586776?style=flat-square" alt="MIT license"></a>
-    <a href="docs/COMPATIBILITY.md"><img src="https://img.shields.io/badge/agents-cross--platform-586776?style=flat-square" alt="Cross-platform agent support"></a>
-    <img src="https://img.shields.io/badge/runtime_deps-zero-2B8C67?style=flat-square" alt="Zero required runtime dependencies">
+    <a href="https://www.skills.sh/kaigorodovtuskul/pareto-forge/pareto-forge"><img src="https://img.shields.io/badge/skills.sh-Pareto%20Forge-111111" alt="skills.sh"></a>
+    <a href="https://agentskills.io/specification"><img src="https://img.shields.io/badge/Agent_Skills-open_standard-00B8C8" alt="Agent Skills"></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-586776" alt="MIT"></a>
+    <img src="https://img.shields.io/badge/version-1.2.0-00B8C8" alt="Version 1.2.0">
   </p>
-
-  <p>
-    <a href="#quick-start"><strong>Quick start</strong></a> ·
-    <a href="#why-pareto-forge">Why Pareto Forge?</a> ·
-    <a href="#how-it-works">How it works</a> ·
-    <a href="#examples">Examples</a> ·
-    <a href="#benchmark-lab">Benchmark Lab</a> ·
-    <a href="#documentation">Docs</a>
-  </p>
-
+  <p><a href="#quick-start">Quick start</a> · <a href="#how-it-works">How it works</a> · <a href="#realistic-example">Example</a> · <a href="#benchmark-lab">Benchmark</a> · <a href="#documentation">Docs</a></p>
   <p><strong>English</strong> · <a href="docs/i18n/README.ru-RU.md">Русский</a></p>
 </div>
 
 ---
 
-## What is Pareto Forge?
-
-**Pareto Forge is a portable [Agent Skill](https://agentskills.io/specification) for better decisions before faster execution.** It combines Pareto-style prioritization, adversarial questioning inspired by *Grill Me*, and minimal-complete engineering inspired by *Ponytail*.
-
-Instead of immediately planning or building everything a request mentions, the agent first asks:
-
-> **What is the smallest set of actions that can deliver the outcome — without dropping essential requirements?**
-
-It then identifies what to **defer**, tries to disprove its preferred approach, executes the simplest credible path, and verifies the result. It is **not** a new LLM, an MCP server, or a promise that every problem follows an exact 80/20 distribution.
-
-<p align="center"><img src="docs/assets/workflow.svg" alt="The five Pareto Forge gates: Outcome, Leverage, Challenge, Minimize, Verify" width="100%"></p>
-
 ## Why Pareto Forge?
 
-### The problem with implementation-first agents
+An AI agent can spend longer debating an implementation than implementing it. It can add tests, architecture, variants and UX polish until a five-minute prototype becomes a small project.
 
-AI coding agents can create a lot of output. That is not always the same as creating value.
+**Pareto Forge is an execution heuristic, not a quality-maximizing ceremony.** It asks:
 
-- **Scope inflation** — implementing every requested idea rather than separating the must-haves from the nice-to-haves.
-- **Premature complexity** — adding orchestration, services, frameworks, or dependencies before they are needed.
-- **Unchallenged assumptions** — confidently choosing an architecture before validating the biggest uncertainty.
-- **Unverified completion** — treating produced code or a polished plan as proof that the user's outcome was achieved.
+> **What's the smallest usable outcome we can deliver now — and when should we stop?**
 
-Pareto Forge changes the *order of decisions*, not the underlying model:
+Aim to get most of the *practical* value early, minimizing elapsed time, tokens and complexity. **80/20 is a mental model, not a claimed empirical law or guaranteed savings.** Explicit user requirements and critical safety/correctness obligations are not optional.
 
-| Without an outcome-first workflow | With Pareto Forge |
-|---|---|
-| Build the full feature list | Identify the smallest sufficient scope |
-| Optimize for visible activity | Optimize for a defined outcome |
-| Add abstractions for hypothetical needs | Reuse → simplify → write only what is necessary |
-| Accept the first plausible plan | Attack its most consequential assumptions |
-| Announce completion | Check the result against evidence |
-
-### Core design: agent judgment × deterministic guardrails
-
-**Agent judgment handles ambiguity:** determine the outcome, evaluate options, ask high-leverage questions, and explain tradeoffs.
-
-**Deterministic utilities handle checkable mechanics:** an optional local ranking script validates candidate scores, mandatory requirements, dependencies, and effort budgets. Repository tests verify the skill's structure and tools; the independent benchmark harness is separate.
-
-These utilities **do not guarantee** that the agent selects the best option, that estimates are objectively correct, or that the skill activates identically in every host.
+<p align="center"><img src="docs/assets/workflow.svg" alt="Value → Cut → Ship → Stop" width="100%"></p>
 
 ## How it works
 
-| Gate | Question | Expected result |
+| Move | What the agent does | What it intentionally avoids |
 |---|---|---|
-| **01 · Outcome** | What measurable result matters, and what must not be compromised? | Success criteria + hard constraints |
-| **02 · Leverage** | Which few actions offer the strongest evidence-backed impact? | Shortlist + explicit **Not now** |
-| **03 · Challenge** | What assumption could make our preferred path fail? | Counterexample + cheapest useful test |
-| **04 · Minimize** | Can we avoid, remove, reuse, or simplify before building? | Smallest complete implementation |
-| **05 · Verify** | Did the result satisfy the success criteria? | Evidence, remaining risks, stop condition |
+| **01 · Value** | Identify the usable result and non-negotiable requirements | Optimizing an imagined ideal product |
+| **02 · Cut** | Reuse what's there; defer low-return polish | Extra dependencies, agents, abstractions, plans |
+| **03 · Ship** | Make a working first slice immediately | Endless architecture discussions |
+| **04 · Stop** | Run a proportionate check, deliver and stop | Refactoring or testing for its own sake |
 
-### Adaptive depth — no process theater
+### Adaptive effort, not a fixed checklist
 
-| Mode | Use when | What the agent does |
-|---|---|---|
-| **Flash** | Small, reversible tasks | Choose → simplify → check |
-| **Focus** *(default)* | Features and everyday decisions | Compare options, challenge assumptions, defer low-value work |
-| **Deep** | Expensive, architectural, or hard-to-reverse decisions | Detailed grill, experiment plan, decision record, rollback |
+- **Flash — default:** act right away on simple reversible tasks. No compulsory planning, scoring matrix or Grill review.
+- **Focus — when useful:** compare only 2–3 plausible choices if the scope genuinely needs a decision.
+- **Deep — exceptional:** invoke targeted critical questions, stronger tests or a decision record for high-risk, irreversible or explicitly complex work.
 
-The agent should choose the **lightest safe mode**. You can request a mode explicitly.
+The detailed [SKILL.md](skills/pareto-forge/SKILL.md) is short and self-contained. References are loaded **only when warranted**.
+
+## Realistic example
+
+**User:** “Build a Streamlit app demonstrating Plotly charts.”
+
+**A lean response:** a runnable gallery with representative chart families, sample data, sidebar navigation, a few valuable controls and one quick launch/smoke check. **Defer:** a giant plugin architecture, custom theme engine, per-chart CI and exhaustive fine-tuning.
+
+**A crucial constraint:** if the user explicitly requires **every Plotly chart type and variation**, a representative gallery does **not** fulfill that contract. Ask approval to narrow scope or implement the full agreed catalog. Speed never justifies silently dropping a must-have.
+
+```text
+streamlit-gallery/
+├── app.py
+└── requirements.txt
+```
+
+Pareto Forge is designed to choose proportionate effort, **not** to always produce this exact file structure.
 
 ## Quick start
 
-### 1. Install with the Skills CLI
-
-Install Pareto Forge directly from its public GitHub repository:
-
 ```bash
-# Install interactively using the open-source Skills CLI
 npx skills add KaigorodovTuskul/pareto-forge --skill pareto-forge
-
-# Install for specific clients
-npx skills add KaigorodovTuskul/pareto-forge --skill pareto-forge -a claude-code -a cursor -a codex
-
-# Install for clients recognized by your Skills CLI version
-npx skills add KaigorodovTuskul/pareto-forge --skill pareto-forge --agent '*'
 ```
 
-The installer is maintained by [Vercel Labs](https://github.com/vercel-labs/skills) and is not bundled in this repository. Review third-party installer permissions before running it.
-
-### 2. Or install offline — no Node.js required
-
-Python 3.9+ is required **only for the optional local tools and installer**, not to read the skill itself.
+Select specific clients if desired:
 
 ```bash
-# Run from the downloaded Pareto Forge repository
+npx skills add KaigorodovTuskul/pareto-forge --skill pareto-forge -a claude-code -a codex -a cursor
+```
+
+Or install locally with the zero-dependency Python installer (Python 3.9+):
+
+```bash
 python scripts/install.py --project /path/to/your/project
-
-# Preview all local installer's known agent targets without writing
 python scripts/install.py --project /path/to/your/project --all --dry-run
-
-# Explicit target(s)
-python scripts/install.py --project /path/to/your/project -a claude-code -a opencode
 ```
 
-Windows PowerShell:
+See [compatibility notes](docs/COMPATIBILITY.md). Client discovery differs; multi-agent portability is not a guarantee of identical model behavior.
 
-```powershell
-py scripts/install.py --project "C:\path\to\your\project" -a claude-code
-```
-
-Existing skill directories are **not overwritten** unless you pass `--force`. For manual installation and host-specific paths, see [Compatibility & Installation](docs/COMPATIBILITY.md).
-
-### 3. Give your agent an outcome
-
-Paste into a skill-capable agent:
+### Give the agent a task
 
 ```text
-Use Pareto Forge in focus mode.
-I need to ship a usable version of [feature] this week.
-Define the outcome, identify the highest-leverage scope,
-challenge the biggest assumption, and tell me what to defer.
-Then implement and verify the smallest complete solution.
+Use Pareto Forge. Build a quick Streamlit + Plotly demo.
+Prioritize a runnable, useful first version. Skip nonessential polish and
+stop as soon as it works. Tell me briefly what you deferred.
 ```
 
-Or for a demanding architecture review:
+No explicit invocation is required where the host can select the skill automatically, but natural discovery depends on the agent implementation.
+
+## What's in the repository?
 
 ```text
-Pareto Forge, deep mode: grill this architecture.
-Ask only questions that could materially change the decision.
-Show the cheaper alternatives and a falsifiable experiment.
-```
-
-Some hosts expose skills as slash commands, but **natural-language invocation is the portable path**; slash-command behavior depends on the client.
-
-## Supported agents
-
-Pareto Forge is vendor-neutral Markdown with a standard `SKILL.md` entry point. It is designed for clients that support the [Agent Skills format](https://agentskills.io/specification).
-
-| Agent | Installation path |
-|---|---|
-| **Claude Code** | Skills CLI or `.claude/skills/` |
-| **OpenAI Codex** | Skills CLI or `.agents/skills/` |
-| **Cursor** | Skills CLI or `.agents/skills/` |
-| **Gemini CLI** | Skills CLI or a supported skills folder |
-| **OpenCode** | Skills CLI or `.opencode/skills/` |
-| **GitHub Copilot, Cline, Windsurf and others** | Skills CLI / host-specific instructions |
-
-**Compatibility means portable format and documented installation options, not guaranteed behavior in every model or agent.** The exact host list evolves; check the [compatibility matrix](docs/COMPATIBILITY.md) and [Skills CLI registry](https://github.com/vercel-labs/skills#supported-agents).
-
-## Examples
-
-### Example 1 · A lean onboarding release
-
-**Request:** “We have 15 feature ideas and one week to launch an onboarding flow. Where should we start?”
-
-<details open>
-<summary><strong>What the Pareto Forge workflow would produce</strong></summary>
-
-- **Outcome:** teammates complete onboarding reliably, with accessibility and correct permissions.
-- **Hard requirements:** access controls, auditing, existing integration contracts, localization.
-- **High-leverage pilot:** reuse the existing invitation API and validate three critical user journeys.
-- **Not now:** a new workflow engine, speculative integrations and dashboard decoration.
-- **Grill question:** does the small pilot handle expired invitations and cross-team roles?
-- **Verify:** run integration and accessibility tests, capture actual completion rate, expand only if warranted.
-
-This is an **illustrative decision process**, not a measured 80/20 gain. [Full walkthrough →](examples/release-planning.md)
-
-</details>
-
-### Example 2 · A deceptively simple UI feature
-
-**Request:** “Add a calendar picker.”
-
-The agent checks existing components and the native platform first. If a native date input satisfies accessibility, browser support, localization, and product requirements, it avoids an unnecessary dependency. If the product needs a richer picker, **simplicity does not override correctness**. [Web app example →](examples/web-app.md)
-
-## Optional deterministic prioritizer
-
-A built-in zero-dependency Python tool can rank **comparable** options while respecting mandatory work and explicit dependencies:
-
-```bash
-python skills/pareto-forge/scripts/rank.py \
-  --input examples/candidates.json \
-  --budget 6
-```
-
-**Scoring heuristic:** `impact × confidence ÷ effort`. The values are user/model estimates, **not measured ROI**, and the selection is greedy rather than a mathematically optimal portfolio. Important decisions still require judgment and evidence.
-
-### What's inside
-
-```text
-pareto-forge/
-├── README.md                    Project overview and usage
-├── skills/pareto-forge/
-│   ├── SKILL.md                 Canonical portable skill
-│   ├── references/              Prioritization, grill, engineering, outputs
-│   ├── assets/                  Decision-record template
-│   └── scripts/rank.py          Optional local priority helper
-├── scripts/                     Offline installer and validator
-├── tests/                       Automated checks and behavioral eval cases
-├── benchmark/                   30-task A/B/C CLI, independent grading, HTML reports
-├── examples/                    Release-planning and web-app walkthroughs
-└── docs/                        Research, audit, compatibility, guides
-    ├── assets/                  Logo and workflow diagram
-    └── i18n/                    Localized documentation
+skills/pareto-forge/
+  SKILL.md                  Short portable skill
+  references/               Only-on-demand guidance: engineering, priority, Grill
+  scripts/rank.py           Optional heuristic ranking (not required for execution)
+benchmark/
+  tasks.json                30 prospective tasks (20 coding + 10 decisions)
+  run.py                    Isolated CLI A/B/C runner (Codex / Claude)
+  judge.py                  Blind usefulness / mandatory-requirement review
+  report.py                 Quality-gated time/token comparison + HTML report
+  PROTOCOL.md               Predeclared methodology and release rules
+scripts/                     Offline installer and validator
+tests/                       Local validation and behavioral cases
+examples/                    Generic scenarios
+docs/                        Research, compatibility, evaluations, translations
 ```
 
 ## Benchmark Lab
 
-**30 prospective scenarios, zero published performance claims.** The repository now includes a reproducible A/B/C evaluation harness:
+**The v1.2.0 goal is efficiency at sufficient quality, not maximal output quality at any cost.** Compare Vanilla, Pareto Forge and optionally Ponytail on the **same tasks, model, permissions and runtime budget**.
 
-- **20 executable Python tasks:** independent hidden functional graders; an answer must pass every assertion to count as solved.
-- **10 decision/control tasks:** independent, blinded pairwise evaluation with explicit hard-constraint vetoes.
-- **Arms:** vanilla vs Pareto Forge, optionally a pinned and reviewed local Ponytail skill.
-- **Evidence:** real CLI runs through Codex or Claude, per-run `trace.jsonl`, timing and token/cost telemetry when available, task-cluster confidence intervals, and a self-contained HTML report with charts.
+- **Usefulness first:** a coding solution must meet its hard acceptance tests. A blinded reviewer checks whether decisions are usable, rather than rewarding long plans.
+- **Efficiency second:** compare **actual elapsed seconds and reported tokens** only across runs where both agents produced usable results. Use task-cluster confidence intervals.
+- **Safety gate:** missing must-haves and critical safety violations cannot be traded for savings.
+- **Controls:** easy edits and factual questions expose unnecessary planning overhead.
 
 ```bash
-# Three repeats × 30 tasks × two arms = 180 real trials.
+# 30 tasks × 2 arms × 3 repeats = 180 real CLI runs; incurs model costs
 python benchmark/run.py --adapter codex --model YOUR_PINNED_MODEL_ID \
   --repeats 3 --out ../pareto-bench-runs/ab-01
 
-python benchmark/judge.py prepare \
-  --run ../pareto-bench-runs/ab-01 \
-  --out ../pareto-bench-runs/blind-ab.json
-
-# See benchmark/README.md for independent judgment + optional Ponytail comparator.
+# Independent blind review is needed before interpreting the report
+python benchmark/judge.py prepare --run ../pareto-bench-runs/ab-01 \
+  --out ../pareto-bench-runs/blind.json
 python benchmark/report.py --run ../pareto-bench-runs/ab-01
 ```
 
-**Current status: unbenchmarked.** No model A/B/C experiment has been executed or verified. Mock adapter tests validate the harness only and must never be cited as results. Real trials may incur API charges and execute agent-created code; **run only inside a disposable sandbox**. See the [Benchmark Lab guide](benchmark/README.md) and [preregistered protocol](benchmark/PROTOCOL.md). Only independent, audited evidence is eligible for publication in this README.
+See the [benchmark guide](benchmark/README.md) for review/import commands, sandboxing and prerequisites, and the [protocol](benchmark/PROTOCOL.md) for predefined evidence thresholds.
 
-## Validation & limitations
+**Status: comparative model results pending.** Existing unit tests check repository plumbing, not actual token savings, faster task completion or 80% utility. The current suite also has limited coverage of real full-app MVP work. Do not publish an uplift claim without independent audit. No time-to-first-usable measurement is asserted: wall time measures completion of the run.
 
-This repository includes structural validation, Python unit tests, installation tests, prospective behavioral cases, and an independent 30-task benchmark harness (not yet executed against an LLM). Run the local checks with:
+## Validation
 
 ```bash
 python scripts/validate.py
@@ -261,36 +146,18 @@ python -m unittest discover -s tests -v
 python -m unittest discover -s benchmark/tests -v
 ```
 
-**What we have not established:** independent performance benchmarks, measured token savings, guaranteed 80/20 gains, or end-to-end behavioral parity across every AI host. See the [evaluation plan](docs/EVALUATION.md) before making claims about effectiveness.
-
-The five gates are instructions for the agent, **not an external enforcement engine**. Mandatory legal, security, safety, and user requirements always take precedence over optimization.
+Checks should be proportionate **when using the skill**; the repository maintains unit tests to ensure its optional tooling is sound. GitHub Actions are **not** required and not bundled.
 
 ## Documentation
 
-| Document | What you'll find |
-|---|---|
-| [Quickstart — Russian](docs/QUICKSTART_RU.md) | Short Russian-language installation guide |
-| [Research](docs/RESEARCH.md) | Reference skills and design decisions |
-| [Design audit](docs/DESIGN_AUDIT.md) | Assumptions, critiques, and mitigations |
-| [Compatibility](docs/COMPATIBILITY.md) | Agent-specific discovery paths and caveats |
-| [Evaluation](docs/EVALUATION.md) | How to measure real behavior and quality |
-| [Benchmark Lab](benchmark/README.md) | Real agent A/B/C runner, graders, raw traces and HTML report |
-| [Branding](docs/BRANDING.md) | Logo assets and usage |
-| [Contributing](CONTRIBUTING.md) | Propose improvements and tests |
-| [Security](SECURITY.md) | Trust model and responsible reporting |
+[Russian quickstart](docs/QUICKSTART_RU.md) · [Reference study](docs/RESEARCH.md) · [Design audit](docs/DESIGN_AUDIT.md) · [Evaluation plan](docs/EVALUATION.md) · [Benchmark Lab](benchmark/README.md) · [Compatibility](docs/COMPATIBILITY.md) · [Branding](docs/BRANDING.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
 
-## Acknowledgments
+## Credits & license
 
-Pareto Forge draws conceptual inspiration from [Ponytail](https://github.com/DietrichGebert/ponytail), [Matt Pocock's skills](https://github.com/mattpocock/skills), [Superpowers](https://github.com/obra/superpowers), and the open [Agent Skills specification](https://agentskills.io/specification). The skill instructions are original; the referenced projects are **not bundled or affiliated**.
+Influenced conceptually by [Ponytail](https://github.com/DietrichGebert/ponytail), [Matt Pocock's skills](https://github.com/mattpocock/skills), and the [Agent Skills spec](https://agentskills.io/specification). These projects are not bundled or affiliated. All Pareto Forge skill instructions are original.
 
-## Contributing & license
-
-Contributions are welcome, especially reproducible failure cases and before/after evaluations. See [CONTRIBUTING.md](CONTRIBUTING.md).
-
-Distributed under the [MIT License](LICENSE). Please review [SECURITY.md](SECURITY.md) before integrating any third-party agent skill into a sensitive development environment.
+[MIT License](LICENSE) · Contributions and honest negative benchmark results are welcome.
 
 ---
 
-<div align="center">
-  <sub><strong>Optimize for outcomes, not output.</strong> · Pareto Forge</sub>
-</div>
+<div align="center"><strong>Useful first. Stop early.</strong></div>

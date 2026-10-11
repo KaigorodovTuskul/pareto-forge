@@ -1,33 +1,39 @@
-# Preregistered benchmark protocol
+# Preregistered protocol — v1.2: Useful first, stop early
 
-Status: **prospective — no efficacy run has been completed**. Freeze this document, `tasks.json`, code oracles and model/config hashes **before running**; commit the frozen set in git.
+**Prospective. No comparative real-model results have been established.** Commit and freeze the exact skill SHA, corpus, oracles, judge rubric, CLI/model version and this protocol **before** running. Do not alter thresholds after seeing data. This protocol supersedes v1.1; never combine v1.1 and v1.2 outcomes as one experiment.
 
-## Experimental unit and comparators
+## Question and experimental unit
 
-Each task × repetition × arm receives a fresh independent workspace and agent session. Use pinned agent version, model, tool permissions and environment. Randomize order with a recorded seed. Baseline: vanilla. Treatment: Pareto Forge. Comparator if available: exact reviewed/pinned Ponytail version. Forced invocation is a separate estimand from natural activation.
+Does Pareto Forge produce **usable outcomes with less elapsed time / tokens**, without materially worse correctness, decision usefulness or safety? Compare identical tasks at identical model, tools, permissions and budgets, randomized order. Arms: Vanilla, Pareto Forge, and optionally a reviewed/pinned Ponytail. Each task × repeat × arm gets a fresh workspace and agent session. Forced use of the skill tests instructed application, not natural discovery; test natural mode separately.
 
-Primary code endpoint: *all independently checked requirements pass* per coding task (`1` or `0`), with 20 tasks. Partial assertion pass fractions are descriptive only. Primary judgment endpoint: blinded head-to-head preference on 10 decision tasks, including the two simple/control tasks. Reviewer sees prompts and anonymous outputs, but no source or arm identities. Explicit hard-constraint failure vetoes quality.
+30 cases: 20 executable small Python functions (functional/correctness controls), 10 decision/scope cases including trivial questions, fast MVP planning, explicit ALL scope, irreversible actions and access controls. **Important limitation:** small functions and written decisions do not establish efficiency on full-size Streamlit or other application builds. Later release-specific validations should add full-project tasks with externally evaluated usable checkpoints.
 
-Secondary endpoints: observed wall-clock duration, output/code complexity, consumed tokens, measured USD cost, subjective calibration and cross-case consistency. No telemetry => N/A. Quantities such as lines changed, tool actions and dependencies may be reported descriptively but **never** as the sole quality endpoint. Agent harness exit failures invalidate published claims pending root-cause audit.
+## What counts as a result?
 
-## Conservative release claim gate
+- **Coding:** all independent functional tests pass, with critical static hints where applicable. Passing hidden assertions is a proxy for minimum usefulness, not full production safety. Code that fails does **not** qualify for a saving claim.
+- **Decision tasks:** blind independent human or independent-model reviewers mark *each* answer `usable_A` and `usable_B`, with hard-constraint flags. Prefer minimal sufficient outcomes over polished essays; protect explicit requirements. Blind *preference* is auxiliary, not the primary benefit metric.
+- **Efficiency:** actual CLI end-to-end wall time and total reported tokens. No reported tokens => `N/A`, not zero. Price is `N/A` if not reported. Do not infer time-to-first-usable from end-to-end elapsed time: that endpoint is **not instrumented** in v1.2.
+- **Comparison:** calculate Pareto/opponent resource ratios only on **paired runs where both results are usable**; use log ratios and task-cluster bootstrap (repetitions are not independent task samples). Report denominators, paired selection bias and all quality outcomes.
+- **Safety:** missing explicit scope, bypassed security, fabricated verification or unauthorized irreversible actions are vetoes. Extra tests or analysis are waste only when their risk-adjusted value is low, not categorically.
 
-The automated report outputs `SUPPORTED_WITHIN_SUITE` **only if**:
+## Conservative experimental success gate (fixed in advance)
 
-1. The full 30-task suite ran in both (and when present all three) arms with at least 3 repetitions per task, *real* CLI adapters, and no command failures or missing blind judgments.
-2. For coding tasks, Pareto's mean binary success advantage over each comparator is **positive with a 95% task-cluster bootstrap CI whose lower bound exceeds zero**.
-3. On blinded decision comparisons, Pareto wins more than half with a **Wilson 95% lower bound > 0.5 **and task-cluster bootstrap 95% lower bound > 0.5**** against each available comparator; ties are not counted as wins.
-4. No recorded hard-constraint violations for Pareto, including during trivial/control tasks.
-5. An independent reviewer spot-checks scored judgments, full traces, execution environment and potential grader blind spots. (This **manual audit is not detectable by code**; the automated label is not release approval.)
+Automated report may label `EFFICIENCY_SUPPORTED_WITHIN_SUITE` only if:
 
-Report `INSUFFICIENT_EVIDENCE` for incomplete runs; `NOT_DEMONSTRATED` for a complete but unconvincing test. `SMOKE_TEST_ONLY` for transport mocks. A completed test failing to show benefit is a *negative or inconclusive result* to document; do not rerun until a p-value becomes favorable or selectively omit failed cases.
+1. All 30 cases complete across *all configured arms*, ≥3 repetitions each, non-mock real adapter, no failed CLI runs, all decision pairs judged.
+2. Pareto has **no recorded hard requirement violations** and no blind safety vetoes.
+3. Against every comparator, task-cluster bootstrap **95% lower confidence limits** on the paired difference in coding success rates **and** blinded decision usability rates are at least **−5 percentage points** (predefined non-inferiority tolerance; does not justify silently skipping explicit user requirements).
+4. Against every comparator, the **upper 95% confidence bound** of Pareto/opponent elapsed-time **or** token ratio, among paired usable results, is below **0.90** (at least 10% resource reduction within this suite). For any *other measured* resource among time/tokens, the upper CI must not exceed **1.10** (no demonstrated material regression). Missing telemetry cannot satisfy that metric.
+5. An **independent manual auditor** checks raw transcripts, task-mismatch and grader blind spots, selection bias, judge labels, unusual failures and versions. A generated label is NOT sufficient for publication.
 
-## Statistical interpretation
+`NOT_DEMONSTRATED` means a completed but unconvincing result. `INSUFFICIENT_EVIDENCE` means the required data or complete review is absent. `SMOKE_TEST_ONLY` never proves efficacy. Do not cherry-pick tasks or rerun until confidence intervals look attractive. Negative findings should be public too.
 
-The cluster bootstrap samples **tasks**, preserving within-task repetitions, so repeated trials are not incorrectly presented as 180 independent different tasks. The Wilson interval estimates a proportion on blind comparisons; because repeats share prompts it is optimistic on its own, so the release gate also requires a **task-cluster bootstrap CI** for the blind win rate. The predefined 30 tasks may not represent external distributions; even a positive result supports only **this suite/model/toolchain**, not the blanket statement "Pareto Forge improves AI agents by X%".
+## Interpretation
 
-No benchmark results should be inserted into the public README unless the evidence gate and independent review are satisfied. If evidence passes, README must name model/agent versions, tasks, repetitions, date, comparisons, outcomes/CI, raw reports and non-generalizability note. Do not conceal unfavorable endpoints (cost, latency, controls) or unknown readings.
+The 5 pp quality margin and 10% savings threshold are **product decision criteria**, not universal scientific standards. A +13% effect can be worthwhile even if it fails this particular strong-evidence gate; disclose estimates and uncertainty. Test controls for regressions (trivial tasks are especially important). Ratios conditional on both arms succeeding can overstate practical value; **always** report raw success, end-to-end resource use by arm, and unsuccessful runs alongside eligible ratios.
 
-## Reproducibility and publication privacy
+**The 80/20 heuristic is not an observable percentage of value in this benchmark**. No claim of "80% result at 20% effort" is warranted unless a separate study operationalizes and measures actual end-user utility and effort.
 
-Never publish secrets, full private user workspaces, internal account data, external cookies, real production code, or raw traces that contain sensitive information. `report.html` and summary JSON may be published after manual redaction/audit; checksums and tool versions are required. Do not add a GitHub badge claiming "SOTA" or "proven 80/20". Preserve historical raw results privately; any selected publication must disclose the selection rule.
+## Reproducibility & privacy
+
+Only use an ephemeral isolated OS/container or VM with secrets and network restricted. Running model-generated Python is unsafe without sandboxing; agent workspace permissions alone do not sandbox the grader. Review any data before publishing JSONL traces. Freeze hashes and CLI versions, redact secrets, publish code and protocol without changing data after the fact.

@@ -1,117 +1,99 @@
-# Pareto Forge Benchmark Lab
+# Pareto Forge — Efficiency Benchmark Lab v1.2
 
-**A real experimental harness, not a dashboard of invented improvements.** Run the same 30 prospective tasks with a baseline agent, Pareto Forge, and optionally a locally pinned Ponytail skill. Save original CLI traces; grade code by hidden, deterministic functional tests; grade decisions by blind paired reviews; compare outcome quality, time, tokens and cost when actually reported.
+**Primary research question:** Does Pareto Forge deliver sufficiently usable outcomes in **less time and fewer tokens**, rather than merely producing better-looking plans?
 
-**No model benchmark has been executed in this repository.** `benchmark/` contains the tools to run one, not results. Mock-adapter smoke tests are explicitly ineligible for efficacy conclusions.
+There are **no real model A/B/C measurements** bundled. Mock tests validate the harness and can never be published as savings evidence.
 
-## Corpus and scoring
+## Existing 30-case suite
 
-- [`tasks.json`](tasks.json): **30 tasks** = 20 independent executable Python stdlib coding prompts + 10 judgment/control prompts. Every task gets an independent fresh workspace.
-- [`graders/code_oracles.py`](graders/code_oracles.py): private-to-agent deterministic I/O tests; not copied into agent workspaces. All tests must pass for a coding task to count as solved. A static flag is added for the timing-safe HMAC task; do not infer formal constant-time guarantees from a code scan.
-- [`judge.py`](judge.py): blinded A/B comparisons on qualitative decisions. Optional OpenRouter evaluation, or supply independent human grades using the same JSON schema. Never use the target agent or the same session as its own judge.
-- [`report.py`](report.py): independent summary and charts in a **self-contained HTML report**, plus `metrics.csv` and `summary.json`. Report flags inconclusive/missing data and has preregistered conservative criteria in [`PROTOCOL.md`](PROTOCOL.md).
+- **20 Python code tasks:** deterministic independent hidden I/O oracles; functional pass requires 100% of required assertions.
+- **10 decision/control tasks:** blinded independent reviewer judges individual answer usefulness and critical constraints, then comparative preference. These now include an explicitly scoped Streamlit/Plotly MVP and an ambiguous **ALL chart variations** request.
+- Outputs: full stdout/stderr and JSONL traces, time, usage when provided by CLI, functional scores, blind usefulness labels, `summary.json`, `metrics.csv` and offline HTML charts.
 
-## Prerequisites
+**Limits:** These are small functions and written plans, not actual full-app development. No measured time-to-first-usable. The project explicitly preserves full mandatory requirements: a user-requested "all" cannot be silently downgraded to a small MVP.
 
-- Python **3.9+**, no required pip dependencies for the harness.
-- An authenticated **Codex CLI** (`codex`) or **Claude Code** (`claude`) on PATH, and a **pinned model ID**.
-- If comparing Ponytail, manually download/review and pin a version: supply the **local** directory containing its `SKILL.md`; it is **not bundled** and not fetched automatically.
-- A disposable **sandbox/container/VM with network and secrets restricted**, especially when executing agent-produced code. Workspace-write in an agent is *not* a complete OS-level security boundary for malicious grader execution. **Never run agent-generated Python with your production credentials.**
+## Setup
 
-## Run A/B (30 tasks × 2 arms × 3 repeats = 180 real trials)
+Requires Python 3.9+, an authenticated Codex or Claude CLI, a pinned model ID, and a disposable external sandbox/container/VM with no sensitive host files, secrets or production access. Executing generated code is risky; CLI workspace restrictions and `python -I` do not replace OS isolation. **You must supply the isolated environment**; the harness does not build one.
 
-From repository root:
+For Ponytail comparator, review a pinned upstream skill and provide its local path. It is not bundled or downloaded.
 
-```bash
-# choose an already-authenticated CLI and an exact model for reproducibility
-python benchmark/run.py --adapter codex --model YOUR_PINNED_MODEL_ID \
-  --repeats 3 --out ../pareto-bench-runs/ab-01
-
-# Alternative adapter (same benchmark, different experiment)
-python benchmark/run.py --adapter claude --model YOUR_PINNED_CLAUDE_MODEL_ID \
-  --repeats 3 --out ../pareto-bench-runs/claude-ab-01
-```
-
-For **A/B/C** (30 tasks × 3 arms × 3 repeats = **270** trials):
+## Real A/B (180 runs at 3 repeats)
 
 ```bash
 python benchmark/run.py --adapter codex --model YOUR_PINNED_MODEL_ID \
-  --ponytail-skill /absolute/path/to/ponytail/skills/ponytail \
-  --repeats 3 --out ../pareto-bench-runs/abc-01
+  --repeats 3 --out ../pareto-bench-runs/ab-v12
 ```
 
-The runner randomizes the **order** of all runs using a recorded seed, creates a new workspace and agent session per trial, records the exact `SKILL.md` hash, saves stdout/stderr, an event `trace.jsonl`, `grading.json`, `timing.json`, and appends to `events.jsonl`. No automatic rerun of failed API calls (because that can make sample counts misleading). The runner refuses a nonempty output destination; runs are immutable.
+For Claude Code:
 
-The default `--activation forced` explicitly asks treatment agents to read their installed skill. **This tests prompt-assisted use, not passive skill discovery.** To investigate natural discovery separately, run another experiment using `--activation natural`. Do not combine arms or settings across experimental designs.
+```bash
+python benchmark/run.py --adapter claude --model YOUR_PINNED_MODEL_ID \
+  --repeats 3 --out ../pareto-bench-runs/claude-v12
+```
 
-## Blind review
+For A/B/C (270 runs):
 
-Prepare packet **outside** raw run directory and give only that packet to an independent reviewer:
+```bash
+python benchmark/run.py --adapter codex --model YOUR_PINNED_MODEL_ID \
+  --ponytail-skill /path/to/pinned/ponytail/skills/ponytail \
+  --repeats 3 --out ../pareto-bench-runs/abc-v12
+```
+
+Runs are randomized, each using a fresh workspace. Default `--activation forced` explicitly instructs agent to read skill, while `--activation natural` separately tests passive discovery; **do not pool**. Real CLI runs can incur charges. Never mistake `--adapter mock` for evaluation.
+
+## Blind independent decision review
+
+Create the packet outside the raw run directory and provide only that packet to reviewer:
 
 ```bash
 python benchmark/judge.py prepare \
-  --run ../pareto-bench-runs/abc-01 \
-  --out ../pareto-bench-runs/blind-packet.json
+  --run ../pareto-bench-runs/ab-v12 \
+  --out ../pareto-bench-runs/ab-blind.json
 ```
 
-`abc-01/private_blind_mapping.json` contains arm identities. **Never provide it to the reviewer.** The packet has candidate answers anonymized as A/B, with randomized order and a neutral scoring rubric. To use an independent model via OpenRouter:
+`private_blind_mapping.json` stays in the run folder. Never show it to the reviewer.
 
-```bash
-# Set your key securely in environment (never commit credentials).
-export OPENROUTER_API_KEY='...'
-python benchmark/judge.py score-openrouter \
-  --blind ../pareto-bench-runs/blind-packet.json \
-  --out ../pareto-bench-runs/judgments.json \
-  --model YOUR_INDEPENDENT_JUDGE_MODEL
-
-python benchmark/judge.py import \
-  --run ../pareto-bench-runs/abc-01 \
-  --judgments ../pareto-bench-runs/judgments.json
-```
-
-For **human judgment**, populate `judgments.json` as
+Judge schema (example, **not a real measurement**):
 
 ```json
 {
   "judge": "independent-human",
-  "judgments": [
-    {
-      "id": "OPAQUE_PAIR_ID_FROM_BLIND_PACKET",
-      "winner": "A",
-      "hard_violation_A": false,
-      "hard_violation_B": false,
-      "reason": "A meets the stated audit constraint and gives a credible validation plan."
-    }
-  ]
+  "judgments": [{
+    "id": "OPAQUE_ID_FROM_PACKET", "winner": "tie",
+    "usable_A": true, "usable_B": true,
+    "hard_violation_A": false, "hard_violation_B": false,
+    "reason": "Both are usable; neither contains critical omissions."
+  }]
 }
 ```
 
-These values are **format examples**, not measured outcomes. Score every pair and review at least a subset manually before treating model judgments as evidence. Do **not** let Antigravity infer arm identity from repository history or private mapping while judging.
-
-## Report
+Or optional independent OpenRouter model (review and pin model, handle credentials locally):
 
 ```bash
-python benchmark/report.py --run ../pareto-bench-runs/abc-01
-# open ../pareto-bench-runs/abc-01/report.html
+python benchmark/judge.py score-openrouter \
+  --blind ../pareto-bench-runs/ab-blind.json \
+  --out ../pareto-bench-runs/ab-judgments.json \
+  --model YOUR_INDEPENDENT_JUDGE_MODEL
 ```
 
-A run produces `summary.json`, `metrics.csv`, and `report.html`. All figures reflect present evidence only; costs and tokens remain N/A when the CLI does not report them. Comparison uses *paired observations by task/repetition*, with a task-cluster bootstrap confidence interval for code pass-rate difference, and task-cluster bootstrapping plus a descriptive Wilson lower bound for blinded preference proportions.
+Import after full review:
 
-### Quick offline smoke test (not an efficacy experiment)
+```bash
+python benchmark/judge.py import \
+  --run ../pareto-bench-runs/ab-v12 \
+  --judgments ../pareto-bench-runs/ab-judgments.json
+python benchmark/report.py --run ../pareto-bench-runs/ab-v12
+```
+
+The report uses task-cluster bootstrap confidence intervals for **quality non-inferiority** and paired usable-run time/token efficiency. Costs/tokens are `N/A` when telemetry is incomplete. The numeric verdict is **not approval to advertise** without human trace review. Read [PROTOCOL.md](PROTOCOL.md) before running: all thresholds must be frozen up front.
+
+## Smoke test (not a model experiment)
 
 ```bash
 python benchmark/run.py --adapter mock --repeats 1 \
-  --case c01-normalize --case d01-onboarding \
-  --out ../pareto-bench-runs/smoke-01
-python benchmark/report.py --run ../pareto-bench-runs/smoke-01
+  --case c01-normalize --case d08-simple --out ../pareto-bench-smoke
+python benchmark/report.py --run ../pareto-bench-smoke
 ```
 
-The report **must** read `SMOKE_TEST_ONLY`. Use `python -m unittest discover -s benchmark/tests -v` for harness tests. Never include mock numbers in `README.md` benchmarks.
-
-## Methodological limits
-
-- Tiny coding tasks are only a synthetic *transfer proxy*, not proof about large codebases. Preregister and later add harder, realistic repo tasks before making broad claims.
-- The Ponytail arm is optional; **do not call A/B results A/B/C** if no reviewed local Ponytail skill was supplied.
-- Install both variants using their same portable markdown skill format, keeping externally configured rules as controlled as possible. Record CLI version, model ID, context and environment, and any observed differences.
-- Judge bias, contamination from existing global skills, differing system prompts, randomness, tool access and network variance can distort results. Repeat with independent seeds/models and spot-check decisions.
-- No measured cost/latency claims without telemetry; no reduction percentages if tasks or outcomes are not comparable. **Never conflate fewer tokens with a better result.**
+Expected verdict: `SMOKE_TEST_ONLY`, regardless of any transport artifacts. No automatic CI required.

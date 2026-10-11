@@ -59,9 +59,68 @@ class BlindJudgingTests(unittest.TestCase):
             self.assertNotIn('vanilla',pid)
             self.assertNotIn('pareto',pid)
             score=p/'reviewer'/'judgments.json'
-            score.write_text(json.dumps({'judge':'mock-human-schema-test','judgments':[{'id':pid,'winner':'tie','hard_violation_A':False,'hard_violation_B':False,'reason':'both mock'}]}))
+            score.write_text(json.dumps({'judge':'mock-human-schema-test','judgments':[{'id':pid,'winner':'tie','hard_violation_A':False,'hard_violation_B':False,'usable_A':False,'usable_B':False,'reason':'both mock'}]}))
             import_grades(run,score)
             result=json.loads((run/'blind_grades.json').read_text())
             self.assertEqual(result['n_valid'],1)
             subprocess.run([sys.executable,str(ROOT/'report.py'),'--run',str(run)],capture_output=True,text=True,check=True)
             self.assertEqual(json.loads((run/'summary.json').read_text())['verdict'],'SMOKE_TEST_ONLY')
+
+class EfficiencyFirstTests(unittest.TestCase):
+    """The report must never reward speed from unusable or unobserved outputs."""
+    def test_quality_gate_excludes_failed_runs(self):
+        from report import efficiency_ratio
+        by={
+            ('c01-normalize',1,'vanilla'):{'grade':{'pass':True},'wall_seconds':10,'usage':{'total_tokens':1000}},
+            ('c01-normalize',1,'pareto'):{'grade':{'pass':False},'wall_seconds':1,'usage':{'total_tokens':100}},
+        }
+        def usable(cid,rep,op,p,a,b):return a['grade']['pass'] and b['grade']['pass']
+        r=efficiency_ratio(by,['c01-normalize'],1,'pareto','vanilla','wall_seconds',usable)
+        self.assertEqual(r['paired_trials'],0)
+        self.assertIsNone(r['pareto_to_baseline_ratio'])
+
+    def test_missing_tokens_are_not_zero_or_a_saving(self):
+        from report import efficiency_ratio
+        by={
+            ('c01-normalize',1,'vanilla'):{'grade':{'pass':True},'wall_seconds':5,'usage':{'total_tokens':900}},
+            ('c01-normalize',1,'pareto'):{'grade':{'pass':True},'wall_seconds':3,'usage':{'total_tokens':None}},
+        }
+        r=efficiency_ratio(by,['c01-normalize'],1,'pareto','vanilla','total_tokens',lambda *args:True)
+        self.assertIsNone(r['pareto_to_baseline_ratio'])
+        self.assertEqual(r['paired_trials'],0)
+
+    def test_time_ratio_only_for_two_usable_runs(self):
+        from report import efficiency_ratio
+        by={}
+        for task in ('c01-normalize','c02-count','c03-pagination'):
+            by[(task,1,'vanilla')]={'wall_seconds':10,'usage':{'total_tokens':1000}}
+            by[(task,1,'pareto')]={'wall_seconds':5,'usage':{'total_tokens':700}}
+        r=efficiency_ratio(by,list(('c01-normalize','c02-count','c03-pagination')),1,'pareto','vanilla','wall_seconds',lambda *args:True)
+        self.assertEqual(r['distinct_tasks'],3)
+        self.assertAlmostEqual(r['pareto_to_baseline_ratio'],0.5)
+        self.assertLess(r['task_bootstrap_95_ci_ratio'][1],0.9)
+
+    def test_blind_grade_requires_independent_usability_flags(self):
+        from judge import prepare, import_grades
+        with tempfile.TemporaryDirectory() as d:
+            p=Path(d);run=p/'run';packet=p/'packet.json'
+            subprocess.run([sys.executable,str(ROOT/'run.py'),'--adapter','mock','--repeats','1','--case','d01-onboarding','--out',str(run)],check=True,capture_output=True)
+            prepare(run,packet,seed=12)
+            token=json.loads(packet.read_text())['pairs'][0]['id']
+            grades=p/'grades.json'
+            grades.write_text(json.dumps({'judge':'test','judgments':[{'id':token,'winner':'A','hard_violation_A':False,'hard_violation_B':False,'reason':'not scored for usability'}]}))
+            import_grades(run,grades)
+            data=json.loads((run/'blind_grades.json').read_text())
+            self.assertEqual(data['n_valid'],0)
+
+    def test_contradictory_usable_and_veto_is_invalid(self):
+        from judge import prepare, import_grades
+        with tempfile.TemporaryDirectory() as d:
+            p=Path(d);run=p/'run';packet=p/'packet.json'
+            subprocess.run([sys.executable,str(ROOT/'run.py'),'--adapter','mock','--repeats','1','--case','d01-onboarding','--out',str(run)],check=True,capture_output=True)
+            prepare(run,packet,seed=42)
+            token=json.loads(packet.read_text())['pairs'][0]['id']
+            grades=p/'grades.json'
+            grades.write_text(json.dumps({'judge':'test','judgments':[{'id':token,'winner':'A','usable_A':True,'usable_B':False,'hard_violation_A':True,'hard_violation_B':False,'reason':'contradiction'}]}))
+            import_grades(run,grades)
+            self.assertEqual(json.loads((run/'blind_grades.json').read_text())['n_valid'],0)

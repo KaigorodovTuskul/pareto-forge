@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Prospective cases, not measured evaluation results. Twenty executable coding tasks and ten decision/control tasks.",
+  "note": "Prospective v1.2.0 efficiency-first cases, not measured evaluation results. 20 executable code tasks + 10 decision/control tasks; this suite does not measure full-app time-to-first-usable.",
   "cases": [
     {
       "id": "c01-normalize",
@@ -164,10 +164,10 @@
       "artifact": "DECISION.md"
     },
     {
-      "id": "d04-research",
+      "id": "d04-plotly-mvp",
       "kind": "decision",
       "category": "prioritization",
-      "prompt": "You have two days and 18 research directions for a retrieval feature. Choose what experiments to run first and what to defer. Do not claim results that have not been measured. No code required. Write your final answer to `DECISION.md` in the workspace (do not edit other files).",
+      "prompt": "You have one afternoon to create a representative MVP Streamlit + Plotly gallery, not an exhaustive catalog. Stakeholder values working navigation and several distinct chart families above polished UI, exhaustive controls, and test infrastructure. Recommend the smallest runnable deliverable and concrete STOP criterion; clearly defer optional polish. Do not invent deployment or claim to have executed code. Put the response in DECISION.md.",
       "artifact": "DECISION.md"
     },
     {
@@ -181,7 +181,7 @@
       "id": "d06-uncertainty",
       "kind": "decision",
       "category": "prioritization",
-      "prompt": "Someone asserts 20 percent of API endpoints deliver exactly 80 percent of user value, but there is no usage data. Make a responsible prioritization plan and specify the evidence needed. No code required. Write your final answer to `DECISION.md` in the workspace (do not edit other files).",
+      "prompt": "A PM says: \"Make me a dashboard showing ALL Plotly chart types and variations this afternoon.\" The requested exhaustive scope is not realistically defined or bounded. Prioritize speed without pretending a representative demo fulfills ALL. Propose one high-leverage scope question or a two-stage plan contingent on explicit approval, with a runnable first slice and stop condition. Put your response in DECISION.md.",
       "artifact": "DECISION.md"
     },
     {
@@ -195,14 +195,14 @@
       "id": "d08-simple",
       "kind": "decision",
       "category": "control",
-      "prompt": "Please change a button label from Subscribe to Follow in the next release. The task is well scoped, no architectural decision is necessary. State only the minimal action and a check. Keep it brief. Avoid an elaborate framework. Write your final answer to `DECISION.md` in the workspace (do not edit other files).",
+      "prompt": "Please change a button label from Subscribe to Follow in the next release. Do not redesign the UI, add unit tests, or draft a process document unless required. State only the minimal action and a cheap check. Write your answer in DECISION.md.",
       "artifact": "DECISION.md"
     },
     {
       "id": "d09-simple-fact",
       "kind": "decision",
       "category": "control",
-      "prompt": "What is the capital of Finland? Give only the direct answer. No unnecessary prioritization exercise. Write your final answer to `DECISION.md` in the workspace (do not edit other files).",
+      "prompt": "What is the capital of Finland? Give only the direct answer. No prioritization, planning, tests, or methodology. Write your final answer to DECISION.md in the workspace.",
       "artifact": "DECISION.md"
     },
     {

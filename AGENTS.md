@@ -1,12 +1,7 @@
-# Pareto Forge — compact fallback instructions
+# Pareto Forge — optional fallback
 
-This file is a fallback for agents that read `AGENTS.md` but do not automatically discover Agent Skills. The canonical skill is [`skills/pareto-forge/SKILL.md`](skills/pareto-forge/SKILL.md). **Do not treat this as a replacement for existing project-specific requirements.**
+Canonical skill: [`skills/pareto-forge/SKILL.md`](skills/pareto-forge/SKILL.md). This file is a short fallback for agents that read `AGENTS.md` but lack skill discovery; project-specific user instructions outrank it.
 
-On non-trivial prioritization, planning, coding or architecture tasks:
-1. Define the user outcome, observable success and hard constraints first.
-2. Compare a few substantially different approaches, including remove/reuse/do less; choose the highest-leverage *feasible* slice and name what is deferred.
-3. Challenge the most consequential assumption with a cheap falsification test; ask a question only when genuinely blocking.
-4. For implementation, favor no change → deletion → existing code → platform → installed dependency → smallest complete new code.
-5. Verify observed results and report what was and was not checked. Never claim empirical 80/20 effects or test success without evidence.
+**Useful first. Stop early.** For trivial, safe, reversible tasks: execute directly with no big plan, matrix, or process narrative. For broader tasks: (1) identify the smallest useful outcome and non-negotiables; (2) reuse existing solutions, cut optional polish; (3) ship a working slice early; (4) perform a proportionate check, and stop when further work has lower value than cost. Choose **Focus** only when competing paths matter and **Deep** only for consequential risk/irreversibility or explicit request.
 
-Use **Flash** for trivial reversible tasks (just do them), **Focus** by default and **Deep** for high-stakes decisions. Never optimize away security, correctness, access control, privacy, legal obligations, user-mandated scope or required tests. No irreversible actions without authorization.
+Never silently shrink explicit requirements, claim tests weren't run, omit safety/privacy/accessibility obligations, or take unauthorized irreversible actions. Do not turn a five-minute task into ten minutes of analysis.

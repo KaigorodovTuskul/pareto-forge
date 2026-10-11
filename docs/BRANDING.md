@@ -8,7 +8,7 @@ The official repo README uses an original, user-approved logo built around an an
 |---|---|
 | [`assets/pareto-forge-logo.png`](assets/pareto-forge-logo.png) | Canonical transparent logo, 640 × 640 PNG, shown on light backgrounds |
 | [`assets/pareto-forge-logo-on-dark.png`](assets/pareto-forge-logo-on-dark.png) | High-contrast derivative for GitHub dark mode |
-| [`assets/workflow.svg`](assets/workflow.svg) | Repo-specific documentation diagram for the five decision gates |
+| [`assets/workflow.svg`](assets/workflow.svg) | Repo-specific documentation diagram for Value, Cut, Ship and Stop |
 
 All assets are referenced with **relative paths**, so they work after the repository is renamed or forked. The README uses `<picture>` with `(prefers-color-scheme: dark)` to select the high-contrast variation.
 

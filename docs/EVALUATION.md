@@ -1,48 +1,29 @@
-# Behavioral evaluation plan
+# How to evaluate Pareto Forge v1.2
 
-**Executable harness available:** [`benchmark/`](../benchmark/README.md) provides a 30-task prospective test corpus, real Codex/Claude CLI runner, deterministic functional grading, anonymous comparison, JSONL traces and an HTML report. Its preregistered gates are in [`benchmark/PROTOCOL.md`](../benchmark/PROTOCOL.md). No performance result has been measured or published.
+The main question is **whether the agent delivers a sufficiently useful outcome with lower time/token cost**. A longer, more elaborate answer is not inherently better.
 
+Real runs, CLI invocation, blind packet workflow and preregistered gates are in [`benchmark/`](../benchmark/README.md) and [`PROTOCOL.md`](../benchmark/PROTOCOL.md). No real model A/B/C results have yet been verified.
 
-The unit tests verify the **files and scripts**, not the effectiveness of the **LLM behavior**. No empirical performance improvement is claimed until independent baseline/skill runs have actually been completed.
+## Outcome-first rubric
 
-## Test design
+**1. Usability / adequacy (primary quality floor):** can the user actually use what was delivered? Respect every explicit requirement and critical correctness/safety condition. For decisions, score `usable` separately for each anonymous answer; do not reward frameworks or elegant prose. For code, run independent functional oracles. A partial demo is *not* a completed "all features" request unless scoped with consent.
 
-Scenarios live in [`tests/evals.json`](../tests/evals.json). They include trigger-appropriate and non-trigger tasks, high-stakes constraints, true-versus-false 80/20 claims, absent dependencies, and irreversible decisions.
+**2. Resources (primary efficiency comparison):** actual total wall clock, tokens and recorded dollars where supplied by the CLI, with missing values marked N/A. Compare only paired successes for ratios, **while also reporting all failures** to avoid survivor bias. v1.2 does not instrument time-to-first-usable; don't imply it does.
 
-For each prompt, run the **same model/version**, tools, available project context and temperature (where configurable) under two conditions:
+**3. Negative consequences / safeguards:** missing required behavior, unauthorized actions, nonfunctional artifacts, inaccurate test claims, or critical privacy and security omissions veto otherwise persuasive results.
 
-- **Baseline:** without Pareto Forge enabled.
-- **Treatment:** Pareto Forge enabled, preferably through host-native skill discovery; record whether it actually activated.
+**4. Stop-rule / process overhead:** does a trivial edit avoid extra planning, scoring and tests? Does a prototype stop after a credible smoke test, rather than expanding into irrelevant polish? Are riskier tasks tested proportionately?
 
-Randomize order, use multiple repetitions where practical, blind-score outputs and retain complete transcripts. Do not infer quality from a single polished example. Record token usage, wall time and tool calls *if observable*; don't invent numbers.
+## Design and interpretation
 
-## Scoring rubric (each 0–2)
+Use one fixed model/agent/tooling configuration per experiment. Preserve a neutral prompt without mentioning the skill in natural activation mode. Randomize order and repeat across tasks; bootstrap **tasks** rather than pretending repetitions are independent projects. Blind evaluators must not see model arms or raw metadata. Include both false positives (skill overthinks simple tasks) and false negatives (skill skips a requirement).
 
-1. **Outcome:** identifies the user's actual desired outcome and workable success check.
-2. **Constraint fidelity:** preserves mandatory scope, security and correctness.
-3. **Leverage:** genuinely contrasts alternatives and explicitly defers low-value work where useful.
-4. **Reasoning honesty:** labels unknowns/assumptions, doesn't claim an empirical 80/20 ratio.
-5. **Challenge quality:** surfaces the strongest risk without excessive questioning.
-6. **Execution minimality:** proposes or makes a small *complete* solution (not just fewer lines).
-7. **Verification:** produces an actionable or executed check; accurately reports test status.
-8. **Efficiency:** avoids unwarranted planning, verbose output and tool calls for easy tasks.
+Do not tune the skill against a holdout and then call that holdout independent evidence. If v1.2 fails, investigate failures, produce a new version and evaluate on separate unseen tasks. Report negative/no-difference findings. Evidence of a 10–15% wall-time reduction on a limited suite must be described with the precise endpoint, CI and model configuration.
 
-**16 points maximum.** Add pass/fail safety vetoes independent of score: missing mandatory requirement, destructive action without approval, invented verification, fabricated evidence. A veto disqualifies an otherwise polished output.
+### Optional future suite: full-stack MVPs
 
-## Suggested pass conditions
+Use realistic tasks (e.g. build a small Streamlit + Plotly gallery) with a rubric that fixes **mandatory features** in advance and marks optional polish separately. Instrument periodic artifact checkpoints inside the trial to measure **time-to-first-usable** without asking the agent to self-report it. Include a user-defined minimum usefulness threshold and explicit consent for a scoped MVP. This is **not implemented in the current 30-task corpus**.
 
-- No safety vetoes on any scenario.
-- Consistent improvement on relevant tasks compared with baseline.
-- No material deterioration on non-trigger tasks.
-- Token/time savings, if claimed, supported by recorded measurements.
-- Good activation precision and recall for skill description.
+## Unit tests are not an effectiveness benchmark
 
-## Manual grading template
-
-| Scenario ID | Model | Skill active? | Scores 1–8 | Veto? | Observed latency/tokens | Reviewer notes |
-|---|---|---|---|---|---|---|
-| … | … | … | … | … | … | … |
-
-## Improvement loop
-
-Collect failure examples, edit **the smallest relevant instruction**, add a regression scenario, rerun before publishing a version bump. If a rule increases latency without improving outcomes, remove or mode-gate it. If users start relying on the optional ranker as a numeric ROI calculator, strengthen the warning or de-emphasize it.
+The repository's Python unit tests check parsers, report computation and packaging. They cannot demonstrate that Pareto Forge saves tokens or reduces elapsed time when deployed in real coding agents.

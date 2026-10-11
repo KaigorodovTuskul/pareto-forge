@@ -1,45 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1280" height="390" viewBox="0 0 1280 390" role="img" aria-labelledby="title desc">
-<title id="title">Pareto Forge: five decision gates</title>
-<desc id="desc">Outcome, Leverage, Challenge, Minimize and Verify. A lightweight, outcome-first workflow for AI agents.</desc>
-<rect width="1280" height="390" rx="22" fill="#121923"/>
-<rect x="1" y="1" width="1278" height="388" rx="21" fill="none" stroke="#344251" stroke-width="2"/>
-<text x="60" y="64" font-family="Arial, Helvetica, sans-serif" font-size="18" letter-spacing="3" font-weight="700" fill="#50E4EA">THE DECISION LOOP</text>
-<text x="60" y="105" font-family="Arial, Helvetica, sans-serif" font-size="29" font-weight="700" fill="#F0F5FB">Five gates. One useful outcome.</text>
-<g font-family="Arial, Helvetica, sans-serif">
-  <rect x="60" y="144" width="214" height="155" rx="12" fill="#1E2935" stroke="#445468"/>
-  <text x="82" y="183" font-size="18" font-weight="700" fill="#50E4EA">01</text>
-  <text x="82" y="218" font-size="24" font-weight="700" fill="#FFFFFF">OUTCOME</text>
-  <text x="82" y="250" font-size="16" fill="#C0CFDD">Define success</text>
-  <text x="82" y="272" font-size="16" fill="#C0CFDD">and constraints</text>
-  <path d="M283 221 H299 M292 214 L300 221 L292 228" fill="none" stroke="#50E4EA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-
-  <rect x="310" y="144" width="214" height="155" rx="12" fill="#1E2935" stroke="#445468"/>
-  <text x="332" y="183" font-size="18" font-weight="700" fill="#50E4EA">02</text>
-  <text x="332" y="218" font-size="24" font-weight="700" fill="#FFFFFF">LEVERAGE</text>
-  <text x="332" y="250" font-size="16" fill="#C0CFDD">Select the few</text>
-  <text x="332" y="272" font-size="16" fill="#C0CFDD">high-value actions</text>
-  <path d="M533 221 H549 M542 214 L550 221 L542 228" fill="none" stroke="#50E4EA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-
-  <rect x="560" y="144" width="214" height="155" rx="12" fill="#1E2935" stroke="#445468"/>
-  <text x="582" y="183" font-size="18" font-weight="700" fill="#50E4EA">03</text>
-  <text x="582" y="218" font-size="24" font-weight="700" fill="#FFFFFF">CHALLENGE</text>
-  <text x="582" y="250" font-size="16" fill="#C0CFDD">Try to falsify</text>
-  <text x="582" y="272" font-size="16" fill="#C0CFDD">the chosen path</text>
-  <path d="M783 221 H799 M792 214 L800 221 L792 228" fill="none" stroke="#50E4EA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-
-  <rect x="810" y="144" width="214" height="155" rx="12" fill="#1E2935" stroke="#445468"/>
-  <text x="832" y="183" font-size="18" font-weight="700" fill="#50E4EA">04</text>
-  <text x="832" y="218" font-size="24" font-weight="700" fill="#FFFFFF">MINIMIZE</text>
-  <text x="832" y="250" font-size="16" fill="#C0CFDD">Build the smallest</text>
-  <text x="832" y="272" font-size="16" fill="#C0CFDD">complete solution</text>
-  <path d="M1033 221 H1049 M1042 214 L1050 221 L1042 228" fill="none" stroke="#50E4EA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-
-  <rect x="1060" y="144" width="160" height="155" rx="12" fill="#163B41" stroke="#50E4EA" stroke-width="2"/>
-  <text x="1082" y="183" font-size="18" font-weight="700" fill="#50E4EA">05</text>
-  <text x="1082" y="218" font-size="24" font-weight="700" fill="#FFFFFF">VERIFY</text>
-  <text x="1082" y="250" font-size="16" fill="#CDE8EA">Prove it works</text>
-  <text x="1082" y="272" font-size="16" fill="#CDE8EA">then stop</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 330" width="1280" height="330" role="img" aria-labelledby="title desc">
+<title id="title">Pareto Forge: Useful first, stop early</title>
+<desc id="desc">Four lightweight moves: Value, Cut, Ship, Stop. Flash by default, review only when risk warrants it.</desc>
+<rect width="1280" height="330" rx="22" fill="#121923"/>
+<rect x="1" y="1" width="1278" height="328" rx="21" fill="none" stroke="#344251" stroke-width="2"/>
+<text x="55" y="55" font-size="15" font-family="Arial,sans-serif" letter-spacing="3" font-weight="700" fill="#50e4ea">THE 80/20 EXECUTION LOOP</text>
+<text x="55" y="98" font-size="28" font-family="Arial,sans-serif" font-weight="700" fill="#f5fafc">Useful first. Stop early.</text>
+<g font-family="Arial,sans-serif">
+ <rect x="55" y="126" width="267" height="135" rx="14" fill="#1e2935" stroke="#445468"/>
+ <text x="80" y="162" font-size="16" font-weight="700" fill="#50e4ea">01</text>
+ <text x="80" y="201" font-size="26" font-weight="700" fill="white">VALUE</text>
+ <text x="80" y="229" font-size="16" fill="#c0cfdd">What must work now?</text>
+ <path d="M328 192 H343 M337 186 L344 192 L337 198" fill="none" stroke="#50e4ea" stroke-width="3"/>
+ <rect x="354" y="126" width="267" height="135" rx="14" fill="#1e2935" stroke="#445468"/>
+ <text x="379" y="162" font-size="16" font-weight="700" fill="#50e4ea">02</text>
+ <text x="379" y="201" font-size="26" font-weight="700" fill="white">CUT</text>
+ <text x="379" y="229" font-size="16" fill="#c0cfdd">What can wait?</text>
+ <path d="M627 192 H642 M636 186 L643 192 L636 198" fill="none" stroke="#50e4ea" stroke-width="3"/>
+ <rect x="653" y="126" width="267" height="135" rx="14" fill="#1e2935" stroke="#445468"/>
+ <text x="678" y="162" font-size="16" font-weight="700" fill="#50e4ea">03</text>
+ <text x="678" y="201" font-size="26" font-weight="700" fill="white">SHIP</text>
+ <text x="678" y="229" font-size="16" fill="#c0cfdd">Deliver a useful slice</text>
+ <path d="M926 192 H941 M935 186 L942 192 L935 198" fill="none" stroke="#50e4ea" stroke-width="3"/>
+ <rect x="952" y="126" width="273" height="135" rx="14" fill="#163b41" stroke="#50e4ea" stroke-width="2"/>
+ <text x="977" y="162" font-size="16" font-weight="700" fill="#50e4ea">04</text>
+ <text x="977" y="201" font-size="26" font-weight="700" fill="white">STOP</text>
+ <text x="977" y="229" font-size="16" fill="#cde8ea">Good enough? Deliver.</text>
 </g>
-<line x1="60" y1="333" x2="1220" y2="333" stroke="#344251"/>
-<text x="60" y="358" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#A8B9C9">Choose the right work. Reject unnecessary complexity. Show evidence.</text>
+<text x="55" y="298" font-size="15" font-family="Arial,sans-serif" fill="#a8b9c9">Flash by default · Grill only when necessary · Never silently drop must-haves</text>
 </svg>
