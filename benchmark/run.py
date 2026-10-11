@@ -62,7 +62,10 @@ def invoke(adapter, model, workspace, prompt, timeout, max_turns, reasoning_effo
         command=[exe,'-p','--output-format','json','--model',model,'--max-turns',str(max_turns),'--permission-mode','acceptEdits',prompt]
         inp=None
     elif adapter=='agy':
-        command=[exe,'-p',prompt,'--model',model,'--effort',reasoning_effort,'--dangerously-skip-permissions','--output-format','json']
+        command=[exe,'-p',prompt,'--model',model]
+        if not model.startswith('claude-') and reasoning_effort:
+            command.extend(['--effort',reasoning_effort])
+        command.extend(['--dangerously-skip-permissions','--output-format','json'])
         inp=None
     else:
         raise ValueError(adapter)
