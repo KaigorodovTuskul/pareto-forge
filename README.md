@@ -4,6 +4,12 @@
     <img src="docs/assets/pareto-forge-logo.png" alt="Pareto Forge" width="148" height="148">
   </picture>
 
+
+
+[![skills.sh](https://img.shields.io/badge/skills.sh-Pareto%20Forge-111111)](https://www.skills.sh/kaigorodovtuskul/pareto-forge/pareto-forge)
+  
+
+
   <h1>Pareto Forge</h1>
   <p><strong>Useful first. Stop early.</strong></p>
   <p>An open-source Agent Skill that helps AI coding agents deliver usable results<br>with less unnecessary planning, code, polish, and token spend.</p>
