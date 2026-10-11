@@ -95,17 +95,17 @@ The agent should choose the **lightest safe mode**. You can request a mode expli
 
 ### 1. Install with the Skills CLI
 
-Once this repository is published on GitHub, replace `YOUR_HANDLE` with the repository owner's username:
+Install Pareto Forge directly from its public GitHub repository:
 
 ```bash
 # Install interactively using the open-source Skills CLI
-npx skills add YOUR_HANDLE/pareto-forge --skill pareto-forge
+npx skills add KaigorodovTuskul/pareto-forge --skill pareto-forge
 
 # Install for specific clients
-npx skills add YOUR_HANDLE/pareto-forge --skill pareto-forge -a claude-code -a cursor -a codex
+npx skills add KaigorodovTuskul/pareto-forge --skill pareto-forge -a claude-code -a cursor -a codex
 
 # Install for clients recognized by your Skills CLI version
-npx skills add YOUR_HANDLE/pareto-forge --skill pareto-forge --agent '*'
+npx skills add KaigorodovTuskul/pareto-forge --skill pareto-forge --agent '*'
 ```
 
 The installer is maintained by [Vercel Labs](https://github.com/vercel-labs/skills) and is not bundled in this repository. Review third-party installer permissions before running it.

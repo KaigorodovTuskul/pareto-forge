@@ -7,9 +7,9 @@
 Once this repo is on GitHub, use the [Vercel Labs skills CLI](https://github.com/vercel-labs/skills), which maintains an evolving client registry:
 
 ```bash
-npx skills add YOUR_HANDLE/pareto-forge --skill pareto-forge
-npx skills add YOUR_HANDLE/pareto-forge --skill pareto-forge --agent '*'
-npx skills add YOUR_HANDLE/pareto-forge --skill pareto-forge -a claude-code -a codex -a cursor
+npx skills add KaigorodovTuskul/pareto-forge --skill pareto-forge
+npx skills add KaigorodovTuskul/pareto-forge --skill pareto-forge --agent '*'
+npx skills add KaigorodovTuskul/pareto-forge --skill pareto-forge -a claude-code -a codex -a cursor
 ```
 
 `--agent '*'` covers **agents recognized by the installed CLI version**, not every conceivable agent. New/renamed client IDs may change. `-g` installs globally. `--copy` can replace symlink installation if the platform disallows symlinks. Review the installer before use. See its [official supported-agent table](https://github.com/vercel-labs/skills#supported-agents).

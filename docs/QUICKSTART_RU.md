@@ -17,7 +17,7 @@
 После публикации репозитория:
 
 ```bash
-npx skills add YOUR_HANDLE/pareto-forge --skill pareto-forge
+npx skills add KaigorodovTuskul/pareto-forge --skill pareto-forge
 ```
 
 Или прямо из распакованного архива, без npm:

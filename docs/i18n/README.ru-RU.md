@@ -79,16 +79,16 @@ Skill старается выбирать самый лёгкий безопас
 
 ### Вариант A — установка через Skills CLI
 
-После публикации репозитория на GitHub замени `YOUR_HANDLE` на имя владельца репозитория:
+Установи Pareto Forge из публичного репозитория GitHub:
 
 ```bash
-npx skills add YOUR_HANDLE/pareto-forge --skill pareto-forge
+npx skills add KaigorodovTuskul/pareto-forge --skill pareto-forge
 
 # Для конкретных агентов
-npx skills add YOUR_HANDLE/pareto-forge --skill pareto-forge -a claude-code -a cursor -a codex
+npx skills add KaigorodovTuskul/pareto-forge --skill pareto-forge -a claude-code -a cursor -a codex
 
 # Для агентов, поддерживаемых текущей версией CLI
-npx skills add YOUR_HANDLE/pareto-forge --skill pareto-forge --agent '*'
+npx skills add KaigorodovTuskul/pareto-forge --skill pareto-forge --agent '*'
 ```
 
 Установщик развивается отдельно: [Vercel Labs skills](https://github.com/vercel-labs/skills). Перед использованием стороннего установщика изучи его полномочия и исходники.
