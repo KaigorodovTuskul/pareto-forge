@@ -51,13 +51,15 @@ def invoke(adapter, model, workspace, prompt, timeout, max_turns):
         # Deliberately incapable of producing a valid solution. Never call this an efficacy run.
         return {'returncode':0, 'stdout':json.dumps({'type':'mock','result':'NOT A MODEL OUTPUT'})+'\n',
                 'stderr':'MOCK ADAPTER: transport smoke test only', 'last_message':'NOT A MODEL OUTPUT'}
-    if not shutil.which(adapter):
+    exe=shutil.which(adapter)
+    if not exe and adapter!='mock':
         raise RuntimeError(f'Agent executable not found: {adapter}')
     if adapter=='codex':
-        command=['codex','exec','--json','--sandbox','workspace-write','--skip-git-repo-check','--ephemeral','--model',model,'--output-last-message',str(workspace.parent/'last_message.txt'),'-']
+        sandbox_mode='danger-full-access' if sys.platform=='win32' else 'workspace-write'
+        command=[exe,'exec','--json','--sandbox',sandbox_mode,'--ignore-user-config','--skip-git-repo-check','--ephemeral','--model',model,'--output-last-message',str(workspace.parent/'last_message.txt'),'-']
         inp=prompt
     elif adapter=='claude':
-        command=['claude','-p','--output-format','json','--model',model,'--max-turns',str(max_turns),'--permission-mode','acceptEdits',prompt]
+        command=[exe,'-p','--output-format','json','--model',model,'--max-turns',str(max_turns),'--permission-mode','acceptEdits',prompt]
         inp=None
     else:
         raise ValueError(adapter)
@@ -127,7 +129,8 @@ def main():
     random.Random(args.seed).shuffle(plan)
     if args.max_runs: plan=plan[:args.max_runs]
     try:
-        v=subprocess.run([args.adapter,'--version'],capture_output=True,text=True,timeout=8,check=False) if args.adapter!='mock' else None
+        exe=shutil.which(args.adapter) or args.adapter
+        v=subprocess.run([exe,'--version'],capture_output=True,text=True,timeout=8,check=False) if args.adapter!='mock' else None
         cli_version=(v.stdout or v.stderr).strip()[:200] if v else 'mock (not real)'
     except Exception as exc:
         cli_version='unavailable: '+str(exc)[:100]
