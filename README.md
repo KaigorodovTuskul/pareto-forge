@@ -4,6 +4,12 @@
     <img src="docs/assets/pareto-forge-logo.png" alt="Pareto Forge — converging paths meet at one high-leverage point" width="160" height="160">
   </picture>
 
+
+
+[![skills.sh](https://img.shields.io/badge/skills.sh-Pareto%20Forge-111111)](https://www.skills.sh/kaigorodovtuskul/pareto-forge/pareto-forge)
+  
+
+
   <h1>Pareto Forge</h1>
 
   <p><strong>Do less. Ship what matters.</strong></p>
